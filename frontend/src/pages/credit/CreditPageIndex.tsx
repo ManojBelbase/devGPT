@@ -1,7 +1,7 @@
 
 const CreditPageIndex = () => {
   return (
-    <div>
+    <div className={"p-4"}>
       creadit page
     </div>
   )
