@@ -3,6 +3,7 @@ const CommunityPageIndex = () => {
   return (
     <div>
       community page
+
     </div>
   )
 }
