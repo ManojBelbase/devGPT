@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/shared/Sidebar";
-import { useAppContext } from "../context/AppContext"; // ✅ import your context
+import { useAppContext } from "../context/AppContext";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { theme } = useAppContext(); // ✅ get theme from context
+  const { theme } = useAppContext();
 
   return (
-    // apply theme globally here 👇
     <div className={theme === "dark" ? "dark bg-[#121212] text-white" : "bg-white text-black"}>
       <div className="flex h-screen">
         {/* Sidebar */}
@@ -34,7 +33,7 @@ const Layout = () => {
         )}
 
         {/* Main content */}
-        <div className="flex-1 ml-0 md:ml-72 overflow-auto transition-colors duration-300">
+        <div className="flex-1 ml-0 md:ml-2 overflow-auto transition-colors duration-300">
           {/* Mobile toggle button */}
           <button
             className="md:hidden p-2 m-2 bg-gray-800 text-white rounded"

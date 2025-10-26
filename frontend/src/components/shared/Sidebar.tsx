@@ -161,7 +161,7 @@ const Sidebar = () => {
 
 
       {/* Credit Purchase options */}
-      <div onClick={() => navigate(FronendRoutes.CREDITS)} className={`flex items-center gap-2 p-3 mt-4 border border-gray-300 rounded-md dark:border-white/15 cursor-pointer hover:scale-103 transition-all`}>
+      <div onClick={() => navigate(FronendRoutes.CREDITS)} className={`flex items-center gap-2 p-3 mt-4 border border-gray-300 rounded-md dark:border-white/15 cursor-pointer hover:scale-101 transition-all`}>
         <Icon icon={"lets-icons:dimond-alt-duotone"} className={`${theme === "dark" ? "text-white" : "text-gray-800"}`} />
         <div className="flxe flex-col text-sm">
           <p className={`${theme === "dark" ? "text-white" : "text-gray-800"}`}>Credits : {user?.credits ? user.credits : 20}</p>
@@ -172,7 +172,7 @@ const Sidebar = () => {
       </div>
       {/* dark mode toggle */}
 
-      <div className="flex items-center gap-2 p-3 mt-4 border border-gray-300 rounded-md dark:border-white/15 cursor-pointer hover:scale-103 transition-all justify-between">
+      <div className="flex items-center gap-2 p-3 mt-4 border border-gray-300 rounded-md dark:border-white/15 cursor-pointer hover:scale-101 transition-all justify-between">
         <div className="flex items-center gap-2 text-sm">
           <Icon icon={theme === "dark" ? "mdi:weather-sunny" : "mdi:weather-night"} className={`${theme === "dark" ? "text-white" : "text-gray-800"}`} />
           <span className={`text-sm font-medium ${theme === "dark" ? "text-white" : "text-gray-800"}`}> {theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
@@ -188,6 +188,13 @@ const Sidebar = () => {
             <span className={`absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ${theme === "dark" ? "translate-x-4" : ""}`}></span>
           </div>
         </label>
+      </div>
+
+      {/* user account */}
+      <div className={`flex items-center gap-3 p-3 mt-4 border border-gray-300 rounded-md dark:border-white/15 cursor-pointer hover:scale-101 transition-all`}>
+        <Icon icon={"mdi:account-circle"} fontSize={30} className={`${theme === "dark" ? "text-white" : "text-gray-800"}`} />
+        <p className="flex-1 text-sm dakr:text-white turncate">{user ? user.name : "Login your account"}</p>
+        {user ? <Icon icon={"mdi:logout"} fontSize={20} className={`${theme === "dark" ? "text-white" : "text-gray-800"}`} /> : null}
       </div>
     </div>
   );
