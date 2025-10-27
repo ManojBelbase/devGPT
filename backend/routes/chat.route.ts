@@ -1,5 +1,4 @@
 import { createChat, deleteChat, getAllChats } from '../controllers/chat.controller';
-import { AuthRequest } from '../types/types';
 import { authMiddleware } from './../middlewares/auth';
 import express from 'express'
 
