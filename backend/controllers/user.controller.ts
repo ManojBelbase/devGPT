@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { response } from "../utils/responseHandler";
 import { User } from "../models/user.model";
 import { generateToken } from "../utils/generateToken";
+import { Chat } from "../models/chat.model";
 
 export const registerUser = async (req: Request, res: Response): Promise<any> => {
     const { name, email, password } = req.body;
@@ -98,3 +99,29 @@ export const logoutUser = (req: Request, res: Response) => {
     return response(res, 200, "Logged out successfully");
 };
 
+// API to get published images
+export const publishedImages = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const publishedImageMessages = await Chat.aggregate([
+            { $unwind: "$messages" },
+            {
+                $match: {
+                    "messages.isImage": true,
+                    "messages.isPublished": true
+                }
+
+            },
+            {
+                $project: {
+                    _id: 0,
+                    imageUrl: "$messages.content",
+                    userName: "$userName"
+                }
+            }
+
+        ])
+        response(res, 200, "Images fetch successfully", { images: publishedImageMessages.reverse() })
+    } catch (error) {
+
+    }
+}
