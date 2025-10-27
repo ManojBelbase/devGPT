@@ -20,7 +20,6 @@ app.use(cookieParser());
 
 connectDB();
 
-app.get('/', (req, res) => res.send("Server is live"));
 app.use('/api/user', userRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/message', messageRouter);
