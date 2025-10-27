@@ -7,3 +7,7 @@ export interface IUser extends Document {
     credits: number;
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+interface AuthRequest extends Request {
+    user?: { _id: string; name: string };
+}
