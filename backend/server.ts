@@ -18,7 +18,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-await connectDB();
+connectDB();
 
 app.get('/', (req, res) => res.send("Server is live"));
 app.use('/api/user', userRouter);

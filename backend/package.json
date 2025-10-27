@@ -1,9 +1,9 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.0", 
   "type": "module",
   "scripts": {
     "start": "tsx server.ts",
-    "build": "tsx server.ts",
+    "build": "tsc",
     "dev": "nodemon --exec tsx server.ts"
   },
   "dependencies": {
