@@ -1,0 +1,100 @@
+import { Request, Response } from "express";
+import { response } from "../utils/responseHandler";
+import { User } from "../models/user.model";
+import { generateToken } from "../utils/generateToken";
+
+export const registerUser = async (req: Request, res: Response): Promise<any> => {
+    const { name, email, password } = req.body;
+
+    try {
+        // 1️⃣ Check if user already exists
+        const userExist = await User.findOne({ email });
+        if (userExist) {
+            return response(res, 400, "User already exists");
+        }
+
+        // 2️⃣ Create new user
+        const user = await User.create({ name, email, password });
+
+        // 3️⃣ Generate token
+        const token = generateToken(String(user._id));
+
+        // 4️⃣ Return success response
+        return response(res, 201, "User created successfully", {
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                credits: user.credits,
+            },
+            token,
+        });
+    } catch (error) {
+        console.error("Error in registerUser:", error);
+        return response(res, 500, "Internal server error");
+    }
+};
+
+
+// API to login user
+
+export const loginUser = async (req: Request, res: Response): Promise<any> => {
+    const { email, password } = req.body;
+
+    try {
+        // 1️⃣ Find user
+        const user = await User.findOne({ email });
+        if (!user) return response(res, 404, "User not found");
+
+        // 2️⃣ Compare password
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) return response(res, 401, "Invalid credentials");
+
+        // 3️⃣ Generate token
+        const token = generateToken(String(user._id));
+
+        // 4️⃣ Send cookie
+        res.cookie("authToken", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+
+        // 5️⃣ Send response
+        return response(res, 200, "User login successfully", {
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                credits: user.credits,
+            },
+        });
+
+    } catch (error) {
+        console.error("Error in loginUser:", error);
+        return response(res, 500, "Internal server error");
+    }
+};
+
+// API to get data
+export const getUser = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const user = (req as any).user;
+        return response(res, 200, user)
+    } catch (error) {
+        return response(res, 500, "Internal server error");
+
+    }
+}
+
+// API to logout 
+export const logoutUser = (req: Request, res: Response) => {
+    res.clearCookie("authToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    });
+    return response(res, 200, "Logged out successfully");
+};
+
