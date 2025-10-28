@@ -7,6 +7,7 @@ import { response } from "../utils/responseHandler"
 export const createChat = async (req: Request, res: Response) => {
     try {
         const userId = (req as any)?.user?._id
+
         const chatData = {
             userId,
             messages: [],

@@ -9,3 +9,46 @@ export interface AppContextType {
     theme: string;
     setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface AppContextType {
+    theme: string;
+    setTheme: (theme: string) => void;
+    navigate: ReturnType<typeof useNavigate>;
+};
+
+
+export type ChatContextType = {
+    chats: any[];
+    selectedChat: any | null;
+    setSelectedChat: (chat: any | null) => void;
+    refreshChats: () => Promise<void>;
+    setChats: React.Dispatch<React.SetStateAction<any[]>>
+};
+
+export type AuthCtx = {
+    user: any | null;
+    loading: boolean;
+    login: (e: string, p: string) => Promise<void>;
+    logout: () => Promise<void>;
+};
+
+
+// ---------------------------------------------------------------------
+// Types (adjust to your real backend shape)
+// ---------------------------------------------------------------------
+export interface Message {
+    role: 'user' | 'assistant';
+    content?: string;
+    type?: 'text' | 'image';
+    // … any other fields you receive
+}
+
+export interface Chat {
+    _id: string;
+    title: string;
+    messages: Message[];
+    userId: string;
+    updatedAt: string;
+    createdAt?: string;
+    // … any other fields
+}

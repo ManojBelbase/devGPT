@@ -2,13 +2,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { getCurrentUser, loginUser, logout as apiLogout } from "../api/userApi";
+import type { AuthCtx } from "../types/types";
 
-type AuthCtx = {
-    user: any | null;
-    loading: boolean;
-    login: (e: string, p: string) => Promise<void>;
-    logout: () => Promise<void>;
-};
+
 
 const AuthContext = createContext<AuthCtx | null>(null);
 

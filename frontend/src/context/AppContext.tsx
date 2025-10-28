@@ -1,14 +1,8 @@
-// context/AppContext.tsx
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { AppContextType } from '../types/types';
 
-type AppContextType = {
-    theme: string;
-    setTheme: (theme: string) => void;
-    navigate: ReturnType<typeof useNavigate>;
-};
-
-const AppContext = createContext<AppContextType | null>(null);
+const AppContext = createContext<AppContextType | any>(null);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();

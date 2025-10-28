@@ -2,13 +2,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getChats } from '../api/chatApi';
 import { useAuth } from './AuthContext';
+import type { ChatContextType } from '../types/types';
 
-type ChatContextType = {
-    chats: any[];
-    selectedChat: any | null;
-    setSelectedChat: (chat: any | null) => void;
-    refreshChats: () => Promise<void>;
-};
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
@@ -24,7 +19,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         }
         try {
             const { data } = await getChats();
-            setChats(data.chats || data);
+            setChats(data.data || data);
         } catch (err) {
             setChats([]);
         }
@@ -34,7 +29,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         refreshChats();
     }, [user]);
 
-    // Optional: Re-fetch chats when user refreshes
     useEffect(() => {
         const handleFocus = () => {
             if (user) refreshChats();
@@ -44,7 +38,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, setSelectedChat, refreshChats }}>
+        <ChatContext.Provider value={{ chats, setChats, selectedChat, setSelectedChat, refreshChats }}>
             {children}
         </ChatContext.Provider>
     );
