@@ -82,7 +82,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
 export const getUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const user = (req as any).user;
-        return response(res, 200, user)
+        return response(res, 200, "User fetch successfully", user)
     } catch (error) {
         return response(res, 500, "Internal server error");
 

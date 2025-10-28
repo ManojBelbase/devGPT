@@ -12,7 +12,7 @@ export const response = (
     }
 
     const responseObject = {
-        status: statusCode < 400 ? "Success" : "Error",
+        status: statusCode < 400 ? "success" : "error",
         message,
         data,
     };
