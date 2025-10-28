@@ -1,4 +1,3 @@
-// src/components/ChatBox.tsx
 import { useEffect, useState, useRef } from "react"
 import { Icon } from "@iconify/react"
 import { useAppContext } from "../context/AppContext"
@@ -39,7 +38,6 @@ const ChatBox = () => {
 
         const userMsg = { role: "user", type: mode, content: prompt }
 
-        // optimistic UI
         setMessages(p => [...p, userMsg])
         setPrompt("")
         setLoading(true)
@@ -112,7 +110,6 @@ const ChatBox = () => {
                         : "border-gray-300 bg-white focus-within:border-blue-500 focus-within:bg-gray-50"
                         }`}
                 >
-                    {/* mode selector */}
                     <div className="relative">
                         <select
                             value={mode}

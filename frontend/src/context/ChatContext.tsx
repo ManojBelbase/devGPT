@@ -19,7 +19,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         }
         try {
             const { data } = await getChats();
-            setChats(data.data || data);
+            setChats((data as any).data || data);
         } catch (err) {
             setChats([]);
         }
