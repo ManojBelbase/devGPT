@@ -1,5 +1,6 @@
 - [x] Update server.ts to move database connection inside the handler with caching for serverless compatibility
 - [x] Update vercel.json to use modern functions configuration with Node.js 18 runtime
+- [x] Add Node.js 18.x engine specification in package.json
 - [ ] Verify environment variables are set in Vercel dashboard (MONGODB_URI, JWT_SECRET, GEMINI_API_KEY, IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT, KHALTI_SECRET_KEY)
 - [ ] Redeploy the function to Vercel
 - [ ] Test the deployment to ensure 500 error is resolved
