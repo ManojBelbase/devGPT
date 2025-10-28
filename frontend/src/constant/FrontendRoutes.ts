@@ -2,5 +2,6 @@ export const FronendRoutes = {
     HOME: "/",
     LOGIN: '/login',
     COMMUNITY: '/community',
-    CREDITS: "/credits"
+    CREDITS: "/credits",
+    PAYMENT_SUCCESS: "/payment-success"
 }

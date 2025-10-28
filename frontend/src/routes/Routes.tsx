@@ -29,6 +29,7 @@ export const appRoutes = [
             { index: true, element: <ChatBox /> },
             { path: FronendRoutes.COMMUNITY, element: <CommunityPageIndex /> },
             { path: FronendRoutes.CREDITS, element: <CreditPageIndex /> },
+            { path: FronendRoutes.PAYMENT_SUCCESS, element: <CreditPageIndex /> }
         ],
     },
 ];
