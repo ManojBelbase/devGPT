@@ -22,15 +22,29 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Connect to DB (only once)
-connectDB();
-
 // Routes
 app.use('/api/user', userRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/message', messageRouter);
 app.use('/api/payment', planRouter);
 
-// ❌ Remove app.listen()
-// ✅ Export handler for Vercel
-export const handler = serverless(app);
+// Cache for DB connection
+let isConnected = false;
+
+const connectToDB = async () => {
+    if (!isConnected) {
+        await connectDB();
+        isConnected = true;
+    }
+};
+
+// ✅ Export handler for Vercel with DB connection
+export const handler = serverless(async (req: any, res: any) => {
+    try {
+        await connectToDB();
+        return app(req, res);
+    } catch (error) {
+        console.error('Database connection error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
