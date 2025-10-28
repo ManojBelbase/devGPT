@@ -1,6 +1,6 @@
 import { authMiddleware } from '../middlewares/auth';
 import express from 'express'
-import { getPlans, purchasePlan, verifyPayment } from './../controllers/credit.controller';
+import { getPlans, purchasePlan, verifyPayment } from '../controllers/plan.controller';
 // routes/planRoutes.ts
 
 const planRouter = express.Router();
