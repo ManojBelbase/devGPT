@@ -25,15 +25,23 @@ const Message = ({ message }: any) => {
                 </div>
             ) : (
                 <div className="flex items-start gap-3 my-2 px-4">
+
                     <Icon
                         icon="material-symbols:smart-toy-outline"
                         fontSize={24}
-                        className="text-gray-600 dark:text-gray-400 mt-1 "
+                        className="text-gray-600 dark:text-gray-400 mt-1"
                     />
                     <div className="flex flex-col gap-2 py-1 px-4 max-w-2xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm">
-                        <div className="text-sm leading-relaxed reset-tw">
+                        {message.isImage ? (
+                            <img
+                                src={message.content}
+                                alt="AI generated"
+                                className="max-w-md rounded-md shadow-sm"
+                            />
+                        ) : <div className="text-sm leading-relaxed reset-tw">
                             <Markdown>{message.content}</Markdown>
-                        </div>
+                        </div>}
+
                         <span className="text-xs text-gray-500 dark:text-gray-400">{message.timestamp}</span>
                     </div>
                 </div>

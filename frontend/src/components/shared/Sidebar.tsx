@@ -37,20 +37,8 @@ const Sidebar = () => {
         { role: "assistant", content: "Pokhara and Mustang are great options!" },
       ],
     },
-    {
-      id: 4,
-      name: "Code Help",
-      updatedAt: "2025-10-23 01:05 PM",
-      messages: [
-        { role: "user", content: "Why is my React app not rendering?" },
-      ],
-    },
-    {
-      id: 5,
-      name: "Empty Chat",
-      updatedAt: "2025-10-20 06:00 PM",
-      messages: [],
-    },
+
+
   ];
 
   const filteredChats = chats.filter((chat) =>
