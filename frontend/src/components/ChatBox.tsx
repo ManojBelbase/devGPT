@@ -1,18 +1,20 @@
 
 import { useEffect, useState, useRef } from "react"
-import { useAppContext } from "../context/AppContext"
-import Logo from "./shared/Logo"
 import { Icon } from "@iconify/react"
+import { useAppContext } from "../context/AppContext"
+import { useChats } from "../context/ChatContext"
+import Logo from "./shared/Logo"
 import Message from "./Message"
 import Loader from "./Loader"
 
 const ChatBox = () => {
-    const { selectedChat, theme } = useAppContext()
+    const { theme } = useAppContext()
     const [messages, setMessages] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
     const [prompt, setPrompt] = useState("")
     const [mode, setMode] = useState<"text" | "image">("text")
     const messagesEndRef = useRef<HTMLDivElement>(null)
+    const { selectedChat } = useChats()
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
