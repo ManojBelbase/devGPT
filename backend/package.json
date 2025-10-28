@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0", 
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "start": "tsx server.ts",
@@ -7,7 +7,10 @@
     "dev": "nodemon --exec tsx server.ts"
   },
   "dependencies": {
+    "@google/genai": "^1.27.0",
     "@imagekit/nodejs": "^7.1.1",
+    "@langchain/core": "^1.0.2",
+    "@langchain/google-genai": "^1.0.0",
     "@types/body-parser": "^1.19.6",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.12.2",
@@ -19,6 +22,7 @@
     "express": "^4.21.1",
     "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
+    "langchain": "^1.0.2",
     "mongoose": "^8.19.2",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.6",

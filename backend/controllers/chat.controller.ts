@@ -14,7 +14,7 @@ export const createChat = async (req: Request, res: Response) => {
             userName: (req as any).user.name
         }
         await Chat.create(chatData)
-        return response(res, 201, "Chat created successfully")
+        return response(res, 201, "Chat created successfully", chatData)
     } catch (error: any) {
         return response(res, 500, "Internal server error", error.message);
     }
