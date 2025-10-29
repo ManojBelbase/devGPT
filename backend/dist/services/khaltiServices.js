@@ -1,9 +1,15 @@
-import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.KhaltiService = void 0;
+const axios_1 = __importDefault(require("axios"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const KHALTI_SECRET_KEY = process.env.KHALTI_SECRET_KEY || '';
 const KHALTI_BASE_URL = 'https://a.khalti.com/api/v2/epayment';
-export class KhaltiService {
+class KhaltiService {
     static getHeaders() {
         return {
             Authorization: `Key ${KHALTI_SECRET_KEY}`,
@@ -15,7 +21,7 @@ export class KhaltiService {
      */
     static async initiatePayment(payload) {
         try {
-            const response = await axios.post(`${KHALTI_BASE_URL}/initiate/`, {
+            const response = await axios_1.default.post(`${KHALTI_BASE_URL}/initiate/`, {
                 return_url: payload.returnUrl,
                 website_url: payload.websiteUrl,
                 amount: payload.amount,
@@ -35,7 +41,7 @@ export class KhaltiService {
      */
     static async verifyPayment(pidx) {
         try {
-            const response = await axios.post(`${KHALTI_BASE_URL}/lookup/`, { pidx }, { headers: this.getHeaders() });
+            const response = await axios_1.default.post(`${KHALTI_BASE_URL}/lookup/`, { pidx }, { headers: this.getHeaders() });
             return response.data;
         }
         catch (error) {
@@ -62,3 +68,4 @@ export class KhaltiService {
         return amount / 100;
     }
 }
+exports.KhaltiService = KhaltiService;

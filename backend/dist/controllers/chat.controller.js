@@ -1,6 +1,9 @@
-import { Chat } from "../models/chat.model";
-import { response } from "../utils/responseHandler";
-export const createChat = async (req, res) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteChat = exports.getAllChats = exports.createChat = void 0;
+const chat_model_1 = require("../models/chat.model");
+const responseHandler_1 = require("../utils/responseHandler");
+const createChat = async (req, res) => {
     try {
         const userId = req?.user?._id;
         const chatData = {
@@ -9,34 +12,37 @@ export const createChat = async (req, res) => {
             title: "New Chat",
             userName: req.user.name
         };
-        await Chat.create(chatData);
-        return response(res, 201, "Chat created successfully", chatData);
+        await chat_model_1.Chat.create(chatData);
+        return (0, responseHandler_1.response)(res, 201, "Chat created successfully", chatData);
     }
     catch (error) {
-        return response(res, 500, "Internal server error", error.message);
+        return (0, responseHandler_1.response)(res, 500, "Internal server error", error.message);
     }
 };
+exports.createChat = createChat;
 // API Controller for getting all chats
-export const getAllChats = async (req, res) => {
+const getAllChats = async (req, res) => {
     try {
         const userId = req.user._id;
-        const chats = await Chat.find({ userId }).sort({ updatedAt: -1 });
-        return response(res, 200, "Chats Fetch successfully", chats);
+        const chats = await chat_model_1.Chat.find({ userId }).sort({ updatedAt: -1 });
+        return (0, responseHandler_1.response)(res, 200, "Chats Fetch successfully", chats);
     }
     catch (error) {
-        return response(res, 500, "Internal server error", error.message);
+        return (0, responseHandler_1.response)(res, 500, "Internal server error", error.message);
     }
 };
+exports.getAllChats = getAllChats;
 // API Controller for deleting a chat
-export const deleteChat = async (req, res) => {
+const deleteChat = async (req, res) => {
     const userId = req.user?._id;
     const { chatId } = req?.body;
     if (!chatId) {
-        return response(res, 400, "chatId is required");
+        return (0, responseHandler_1.response)(res, 400, "chatId is required");
     }
-    const result = await Chat.deleteOne({ _id: chatId, userId });
+    const result = await chat_model_1.Chat.deleteOne({ _id: chatId, userId });
     if (result.deletedCount === 0) {
-        return response(res, 404, "Chat not found or already deleted");
+        return (0, responseHandler_1.response)(res, 404, "Chat not found or already deleted");
     }
-    return response(res, 200, "Chat deleted successfully");
+    return (0, responseHandler_1.response)(res, 200, "Chat deleted successfully");
 };
+exports.deleteChat = deleteChat;

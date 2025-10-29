@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "commonjs",
     "rootDir": "./",
     "outDir": "./dist",
     "resolveJsonModule": true,

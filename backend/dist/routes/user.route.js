@@ -1,10 +1,15 @@
-import { authMiddleware } from './../middlewares/auth';
-import express from 'express';
-import { getUser, loginUser, logoutUser, publishedImages, registerUser } from '../controllers/user.controller';
-const userRouter = express.Router();
-userRouter.post("/register", registerUser);
-userRouter.post("/login", loginUser);
-userRouter.get('/data', authMiddleware, getUser);
-userRouter.get("/logout", authMiddleware, logoutUser);
-userRouter.get('/published-images', publishedImages);
-export default userRouter;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const auth_1 = require("./../middlewares/auth");
+const express_1 = __importDefault(require("express"));
+const user_controller_1 = require("../controllers/user.controller");
+const userRouter = express_1.default.Router();
+userRouter.post("/register", user_controller_1.registerUser);
+userRouter.post("/login", user_controller_1.loginUser);
+userRouter.get('/data', auth_1.authMiddleware, user_controller_1.getUser);
+userRouter.get("/logout", auth_1.authMiddleware, user_controller_1.logoutUser);
+userRouter.get('/published-images', user_controller_1.publishedImages);
+exports.default = userRouter;

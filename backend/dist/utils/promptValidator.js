@@ -1,11 +1,14 @@
-import { openai } from "../config/openAI";
-import { SYSTEM_PROMPTS } from "./devGptPrompt";
-export const validateDevPrompt = async (prompt, type) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateDevPrompt = void 0;
+const openAI_1 = require("../config/openAI");
+const devGptPrompt_1 = require("./devGptPrompt");
+const validateDevPrompt = async (prompt, type) => {
     const systemPrompt = type === 'image'
-        ? SYSTEM_PROMPTS.IMAGE_GENERATION
-        : SYSTEM_PROMPTS.TEXT_CHAT;
+        ? devGptPrompt_1.SYSTEM_PROMPTS.IMAGE_GENERATION
+        : devGptPrompt_1.SYSTEM_PROMPTS.TEXT_CHAT;
     try {
-        const { choices } = await openai.chat.completions.create({
+        const { choices } = await openAI_1.openai.chat.completions.create({
             model: "gemini-2.0-flash",
             messages: [
                 { role: "system", content: systemPrompt },
@@ -36,3 +39,4 @@ export const validateDevPrompt = async (prompt, type) => {
         throw error;
     }
 };
+exports.validateDevPrompt = validateDevPrompt;

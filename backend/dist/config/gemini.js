@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.gemini = void 0;
 // config/gemini.ts
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+const google_genai_1 = require("@langchain/google-genai");
 const GOOGLE_API_KEY = process.env.GEMINI_API_KEY;
-export const gemini = new ChatGoogleGenerativeAI({
+exports.gemini = new google_genai_1.ChatGoogleGenerativeAI({
     model: "gemini-1.5-flash",
     temperature: 0,
     maxOutputTokens: 1024,

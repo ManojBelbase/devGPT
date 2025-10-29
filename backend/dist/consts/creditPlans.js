@@ -1,4 +1,7 @@
-export const plans = [
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.plans = void 0;
+exports.plans = [
     {
         _id: "basic",
         name: "Basic",
