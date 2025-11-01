@@ -1,11 +1,7 @@
 // components/PublicRoute.tsx
 import { Navigate } from "react-router-dom";
-import type { JSX } from "react";
 import { useAuth } from "../context/AuthContext";
-
-interface PublicRouteProps {
-    children: JSX.Element;
-}
+import type { PublicRouteProps } from "../types/types";
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
     const { user, loading } = useAuth(); // Use loading!

@@ -1,5 +1,5 @@
 
-const Loader = () => {
+const ChatLoader = () => {
     return (
         <div>
             <div className="loader flex items-center gap-1.5">
@@ -14,4 +14,4 @@ const Loader = () => {
     )
 }
 
-export default Loader
+export default ChatLoader

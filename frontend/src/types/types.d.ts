@@ -52,3 +52,12 @@ export interface Chat {
     createdAt?: string;
     // … any other fields
 }
+
+export interface ProtectedRouteProps {
+    children: JSX.Element;
+}
+
+export
+    interface PublicRouteProps {
+    children: JSX.Element;
+}

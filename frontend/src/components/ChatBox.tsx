@@ -5,7 +5,7 @@ import { useChats } from "../context/ChatContext"
 import { useAuth } from "../context/AuthContext"
 import Logo from "./shared/Logo"
 import Message from "./Message"
-import Loader from "./Loader"
+import Loader from "./ChatLoader"
 import toast from "react-hot-toast"
 import { generateImage, generateText } from "../api/chatApi"
 

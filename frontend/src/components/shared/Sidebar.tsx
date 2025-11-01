@@ -21,16 +21,14 @@ const Sidebar = () => {
         selectedChat,
         setSelectedChat,
         setChats,
-        refreshChats, // optional – keep only for initial load
+        refreshChats,
     } = useChats();
     const { user, logout } = useAuth();
 
     const [searchTerm, setSearchTerm] = useState("");
     const [creatingChat, setCreatingChat] = useState(false);
 
-    // -----------------------------------------------------------------
     // 1. FILTER CHATS (search)
-    // -----------------------------------------------------------------
     const filteredChats = chats.filter((chat) => {
         const title = (chat.title || "").toLowerCase();
         const messages = chat.messages || [];
@@ -42,9 +40,6 @@ const Sidebar = () => {
         return inTitle || inMessages;
     });
 
-    // -----------------------------------------------------------------
-    // 2. CREATE NEW CHAT – INSTANT UI + correct error handling
-    // -----------------------------------------------------------------
     const handleNewChat = async () => {
         if (creatingChat || !user) return;
         setCreatingChat(true);
