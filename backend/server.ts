@@ -32,6 +32,10 @@ app.use('/api/message', messageRouter);
 app.use('/api/payment', planRouter);
 
 
+app.get("/", (req, res) => {
+    res.send("Server is running successfully 🚀");
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
