@@ -33,10 +33,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            await apiLogout();                     // clear any old cookie
+            await apiLogout();                     // ❌ remove this line
             const { data } = await loginUser({ email, password });
             if (!data.success) throw new Error(data.message);
-            await loadUser();                      // <-- refetch with new cookie
+            await loadUser();
             toast.success("Logged in!");
         } catch (e: any) {
             toast.error(e.message || "Login failed");

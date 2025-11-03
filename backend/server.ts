@@ -13,12 +13,16 @@ dotenv.config();
 const app = express();
 
 // CORS
+const isDev = process.env.NODE_ENV !== "production";
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL || '*', // Use your live frontend URL
+        origin: isDev
+            ? ["http://localhost:5173"]
+            : ["https://dev-gpt-frontend.vercel.app"],
         credentials: true,
     })
 );
+
 
 app.use(express.json());
 app.use(cookieParser());
