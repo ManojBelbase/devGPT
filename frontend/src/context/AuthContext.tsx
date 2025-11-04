@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { getCurrentUser, loginUser, logout as apiLogout } from "../api/userApi";
@@ -15,11 +14,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const loadUser = async () => {
         try {
             const { data } = await getCurrentUser();
-            console.log('API Response:', data); // Keep this for debugging
-
-            // Your backend format
             if (data.status === "success" && data.data) {
-                setUser(data.data); // data.data = user object
+                setUser(data.data);
             } else {
                 setUser(null);
             }
@@ -33,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            await apiLogout();                     // ❌ remove this line
             const { data } = await loginUser({ email, password });
             if (!data.success) throw new Error(data.message);
             await loadUser();

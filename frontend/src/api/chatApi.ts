@@ -1,8 +1,5 @@
-// src/api/chatApi.ts
 import type { Chat } from '../types/types';
 import api from './axiosInstance';
-
-
 
 export const getChats = () => api.get<Chat[]>('/api/chat');
 
