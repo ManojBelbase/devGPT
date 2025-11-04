@@ -18,7 +18,7 @@ app.use(
     cors({
         origin: isDev
             ? ["http://localhost:5173"]
-            : ["https://dev-gpt-frontend.vercel.app"],
+            : ["https://devgptai.vercel.app"],
         credentials: true,
     })
 );

@@ -3,8 +3,6 @@ import toast from "react-hot-toast";
 import { getCurrentUser, loginUser, logout as apiLogout } from "../api/userApi";
 import type { AuthCtx } from "../types/types";
 
-
-
 const AuthContext = createContext<AuthCtx | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
