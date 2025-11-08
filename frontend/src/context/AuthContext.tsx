@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const login = async (email: string, password: string) => {
         try {
             const { data } = await loginUser({ email, password });
+            console.log(data, "data")
             if (!data.success) throw new Error(data.message);
             await loadUser();
             toast.success("Logged in!");

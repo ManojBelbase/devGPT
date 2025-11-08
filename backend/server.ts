@@ -14,16 +14,16 @@ const app = express();
 
 // CORS
 const isDev = process.env.NODE_ENV !== "production";
-app.use(
-    cors({
-        origin: isDev
-            ? ["http://localhost:5173"]
-            : ["https://devgptai.vercel.app"],
-        credentials: true,
-    })
-);
+const corsOptions = {
+    origin: isDev
+        ? ["http://localhost:5173"]
+        : ["https://devgptai.vercel.app", "http://localhost:5173"],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Explicit for preflights
+    allowedHeaders: ['Content-Type', 'Authorization'],  // Add if using auth tokens
+};
 
-
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
