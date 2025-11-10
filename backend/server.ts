@@ -13,17 +13,15 @@ dotenv.config();
 const app = express();
 
 // CORS
-const isDev = process.env.NODE_ENV !== "production";
-const corsOptions = {
-    origin: isDev
-        ? ["http://localhost:5173"]
-        : ["https://devgptai.vercel.app", "http://localhost:5173"],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Explicit for preflights
-    allowedHeaders: ['Content-Type', 'Authorization'],  // Add if using auth tokens
-};
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://devgptai.vercel.app/",
+        "https://dev-gpt-client-git-main-manojs-projects-391db5d0.vercel.app"
+    ],
+    credentials: true, // ✅ MUST be true for cookies
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
