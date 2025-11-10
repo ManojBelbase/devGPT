@@ -3,4 +3,4 @@ export const getCurrentUser = () => api.get('api/user/data');
 export const registerUser = () => api.post('api/user/register');
 export const loginUser = (credentials: { email: string; password: string }) =>
     api.post('api/user/login', credentials);
-export const logout = () => api.post('/api/user/logout');
+export const logout = () => api.get('/api/user/logout');
