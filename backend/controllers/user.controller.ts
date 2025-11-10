@@ -58,11 +58,9 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
             httpOnly: true,
             secure: !isLocalhost,
             sameSite: isLocalhost ? "lax" : "none",
-            domain: isLocalhost ? undefined : ".vercel.app",
             path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000,
         });
-
 
         // ✅ Always send response
         return response(res, 200, "User login successful", {
@@ -99,7 +97,6 @@ export const logoutUser = (req: Request, res: Response) => {
         httpOnly: true,
         secure: !isLocalhost,
         sameSite: isLocalhost ? "lax" : "none",
-        domain: isLocalhost ? undefined : ".vercel.app",
         path: "/",
     });
 
