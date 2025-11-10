@@ -8,7 +8,7 @@ const AuthContext = createContext<AuthCtx | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
-    const hasInitialized = useRef(false); // Prevent multiple initializations
+    const hasInitialized = useRef(false);
 
     const loadUser = useCallback(async (silent = false) => {
         try {

@@ -1,4 +1,3 @@
-// api/axiosInstance.ts
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -6,8 +5,6 @@ const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'https://devgptserver.vercel.app/',
     withCredentials: true,
 });
-
-// Optional: Global error handling
 api.interceptors.response.use(
     (response) => response,
     (error) => {
