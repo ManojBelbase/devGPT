@@ -51,14 +51,13 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
 
         const token = generateToken(String(user._id));
 
-        // ✅ Detect environment
         const isLocalhost = req.headers.origin?.includes("localhost");
 
         // ✅ Set cookie properly
         res.cookie("authToken", token, {
             httpOnly: true,
-            secure: !isLocalhost, // Secure for production
-            sameSite: isLocalhost ? "lax" : "none", // 'none' needed for cross-site HTTPS
+            secure: !isLocalhost,
+            sameSite: isLocalhost ? "lax" : "none",
             path: "/",
             maxAge: 30 * 24 * 60 * 60 * 1000,
         });
@@ -92,13 +91,18 @@ export const getUser = async (req: Request, res: Response): Promise<any> => {
 
 // API to logout 
 export const logoutUser = (req: Request, res: Response) => {
+    const isLocalhost = req.headers.origin?.includes("localhost");
+
     res.clearCookie("authToken", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: !isLocalhost,
+        sameSite: isLocalhost ? "lax" : "none",
+        path: "/",
     });
-    return response(res, 200, "Logged out successfully");
+
+    return response(res, 200, "Logged out successfullyy");
 };
+
 
 // API to get published images
 export const publishedImages = async (req: Request, res: Response): Promise<any> => {
