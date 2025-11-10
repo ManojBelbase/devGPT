@@ -5,18 +5,26 @@ const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'https://devgptserver.vercel.app/',
     withCredentials: true,
 });
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        const url = error.config?.url;
+
+        // Skip redirect for session-check APIs
+        if (error.response?.status === 401 && !url?.includes('/user/current')) {
             toast.error('Session expired. Please log in again.');
             window.location.href = '/login';
-        } else {
-            const msg = error.response?.data?.message || 'Something went wrong';
+        } else if (error.response) {
+            const msg = error.response.data?.message || 'Something went wrong';
             toast.error(msg);
+        } else {
+            toast.error('Network error. Please try again.');
         }
+
         return Promise.reject(error);
     }
 );
+
 
 export default api;

@@ -6,7 +6,7 @@ const userRouter = express.Router();
 
 userRouter.post("/register", registerUser)
 userRouter.post("/login", loginUser)
-userRouter.get('/data', authMiddleware, getUser)
+userRouter.get('/current', authMiddleware, getUser)
 userRouter.get("/logout", authMiddleware, logoutUser)
 userRouter.get('/published-images', publishedImages)
 
