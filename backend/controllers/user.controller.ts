@@ -65,14 +65,16 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
 
 
         // 5️⃣ Send response
-        return response(res, 200, "User login successfully", {
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                credits: user.credits,
-            },
+        const isLocalhost = req.headers.origin?.includes("localhost");
+
+        res.cookie("authToken", token, {
+            httpOnly: true,
+            secure: !isLocalhost, // Secure only if NOT localhost
+            sameSite: isLocalhost ? "lax" : "none", // 'none' for cross-site HTTPS
+            path: "/",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
+
 
     } catch (error) {
         console.error("Error in loginUser:", error);
