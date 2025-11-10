@@ -13,14 +13,15 @@ dotenv.config();
 const app = express();
 
 // CORS
-app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://devgptai.vercel.app/",
-        "https://dev-gpt-client-git-main-manojs-projects-391db5d0.vercel.app"
-    ],
-    credentials: true, // ✅ MUST be true for cookies
-}));
+app.use(
+    cors({
+        origin: [
+            "https://devgptai.vercel.app", // your frontend
+            "http://localhost:5173",       // for local dev
+        ],
+        credentials: true, // very important for cookies
+    })
+);
 
 app.use(express.json());
 app.use(cookieParser());
