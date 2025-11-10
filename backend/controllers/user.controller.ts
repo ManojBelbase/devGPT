@@ -54,19 +54,10 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
         // 3️⃣ Generate token
         const token = generateToken(String(user._id));
 
-        // 4️⃣ Send cookie
-        res.cookie("authToken", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production", // true on Vercel
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // must be lowercase "none"
-            path: "/", // good practice for cross-origin cookie visibility
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
 
 
         // 5️⃣ Send response
         const isLocalhost = req.headers.origin?.includes("localhost");
-
         res.cookie("authToken", token, {
             httpOnly: true,
             secure: !isLocalhost, // Secure only if NOT localhost
