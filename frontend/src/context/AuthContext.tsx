@@ -71,28 +71,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // CRITICAL: Only initialize ONCE
     useEffect(() => {
-        if (hasInitialized.current) {
-            return; // Already initialized, skip
-        }
-
+        if (hasInitialized.current) return;
         hasInitialized.current = true;
 
         const initAuth = async () => {
-            // Check if there's any indication of a session before calling API
-            // This prevents unnecessary 401 errors
-            const hasCookies = document.cookie.length > 0;
-
-            if (hasCookies) {
-                // Only try to load user if there are cookies
-                await loadUser(true);
-            } else {
-                // No cookies = definitely not logged in
-                setLoading(false);
-            }
+            await loadUser(true);
         };
 
         initAuth();
-    }, []); // Empty deps - only run once
+    }, []);
 
     return (
         <AuthContext.Provider value={{ user, loading, login, logout }}>
