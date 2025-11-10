@@ -43,35 +43,41 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     const { email, password } = req.body;
 
     try {
-        // 1️⃣ Find user
         const user = await User.findOne({ email });
         if (!user) return response(res, 404, "User not found");
 
-        // 2️⃣ Compare password
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return response(res, 401, "Invalid credentials");
 
-        // 3️⃣ Generate token
         const token = generateToken(String(user._id));
 
-
-
-        // 5️⃣ Send response
+        // ✅ Detect environment
         const isLocalhost = req.headers.origin?.includes("localhost");
+
+        // ✅ Set cookie properly
         res.cookie("authToken", token, {
             httpOnly: true,
-            secure: !isLocalhost, // Secure only if NOT localhost
-            sameSite: isLocalhost ? "lax" : "none", // 'none' for cross-site HTTPS
+            secure: !isLocalhost, // Secure for production
+            sameSite: isLocalhost ? "lax" : "none", // 'none' needed for cross-site HTTPS
             path: "/",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            maxAge: 30 * 24 * 60 * 60 * 1000,
         });
 
-
+        // ✅ Always send response
+        return response(res, 200, "User login successful", {
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                credits: user.credits,
+            },
+        });
     } catch (error) {
         console.error("Error in loginUser:", error);
         return response(res, 500, "Internal server error");
     }
 };
+
 
 // API to get data
 export const getUser = async (req: Request, res: Response): Promise<any> => {
