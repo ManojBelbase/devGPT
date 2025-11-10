@@ -100,7 +100,7 @@ export const logoutUser = (req: Request, res: Response) => {
         path: "/",
     });
 
-    return response(res, 200, "Logged out successfullyy");
+    return response(res, 200, "Logged out successfullyx");
 };
 
 

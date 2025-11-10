@@ -2,11 +2,13 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 import toast from "react-hot-toast";
 import { getCurrentUser, loginUser, logout as apiLogout } from "../api/userApi";
 import type { AuthCtx } from "../types/types";
+import { useAppContext } from "./AppContext";
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<any | null>(null);
+    const { navigate } = useAppContext();
     const [loading, setLoading] = useState(true);
     const hasInitialized = useRef(false);
 
@@ -60,12 +62,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logout = async (): Promise<void> => {
         try {
             await apiLogout();
-        } catch (err: any) {
+        } catch (err) {
             console.error('Logout API error:', err);
         } finally {
             setUser(null);
             toast.success("Logged out successfully");
-            window.location.href = "/login";
+            navigate("/login"); // ✅ client-side navigation, no refresh
         }
     };
 

@@ -2,8 +2,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'https://devgptserver.vercel.app/',
-    withCredentials: true,
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8001',
+    withCredentials: true
 });
 
 api.interceptors.response.use(
