@@ -94,7 +94,6 @@ export const refreshTokenController = async (req: Request, res: Response) => {
     }
 };
 
-
 // API to get data
 export const getUser = async (req: Request, res: Response): Promise<any> => {
     try {

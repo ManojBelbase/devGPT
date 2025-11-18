@@ -1,5 +1,4 @@
 
-// API controller for creating new chat
 import { Request, Response } from "express"
 import { Chat } from "../models/chat.model"
 import { response } from "../utils/responseHandler"
@@ -22,7 +21,6 @@ export const createChat = async (req: Request, res: Response) => {
 }
 
 // API Controller for getting all chats
-
 export const getAllChats = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user._id;
