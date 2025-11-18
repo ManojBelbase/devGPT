@@ -1,79 +1,96 @@
 import { Request, Response } from "express";
 import { response } from "../utils/responseHandler";
 import { User } from "../models/user.model";
-import { generateToken } from "../utils/generateToken";
 import { Chat } from "../models/chat.model";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../services/token.service";
+import { sendAuthCookies } from "../utils/sendCookies";
 
-export const registerUser = async (req: Request, res: Response): Promise<any> => {
-    const { name, email, password } = req.body;
-
+export const registerUser = async (req: Request, res: Response) => {
     try {
-        // 1️⃣ Check if user already exists
-        const userExist = await User.findOne({ email });
-        if (userExist) {
-            return response(res, 400, "User already exists");
-        }
+        const { name, email, password } = req.body;
 
-        // 2️⃣ Create new user
+        const exist = await User.findOne({ email });
+        if (exist) return response(res, 400, "User already exists")
+
         const user = await User.create({ name, email, password });
 
-        // 3️⃣ Generate token
-        const token = generateToken(String(user._id));
+        const accessToken = generateAccessToken((user._id as any).toString());
+        const refreshToken = generateRefreshToken((user._id as any).toString());
 
-        // 4️⃣ Return success response
-        return response(res, 201, "User created successfully", {
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                credits: user.credits,
-            },
-            token,
-        });
-    } catch (error) {
-        console.error("Error in registerUser:", error);
+        const isLocalhost = req.headers.origin?.includes("localhost") ?? false;
+        sendAuthCookies(res, accessToken, refreshToken, isLocalhost);
+
+        return response(res, 201, "User registered successfully", {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            credits: user.credits,
+        })
+    } catch (err) {
         return response(res, 500, "Internal server error");
     }
 };
 
-
 // API to login user
-
-export const loginUser = async (req: Request, res: Response): Promise<any> => {
-    const { email, password } = req.body;
-
+export const loginUser = async (req: Request, res: Response) => {
     try {
+        const { email, password } = req.body;
+
         const user = await User.findOne({ email });
         if (!user) return response(res, 404, "User not found");
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) return response(res, 401, "Invalid credentials");
 
-        const token = generateToken(String(user._id));
+        const match = await user.comparePassword(password);
+        if (!match)
+            return response(res, 401, "Invalid credentials");
 
-        const isLocalhost = req.headers.origin?.includes("localhost");
+        const accessToken = generateAccessToken((user._id as any).toString());
+        const refreshToken = generateRefreshToken((user._id as any).toString());
 
-        // ✅ Set cookie properly
-        res.cookie("authToken", token, {
-            httpOnly: true,
-            secure: !isLocalhost,
-            sameSite: isLocalhost ? "lax" : "none",
-            path: "/",
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
+        const isLocalhost = req.headers.origin?.includes("localhost") ?? false;
+        sendAuthCookies(res, accessToken, refreshToken, isLocalhost);
+        return response(res, 200, "Login successfully", {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            credits: user.credits,
+        }
+        )
 
-        // ✅ Always send response
-        return response(res, 200, "User login successful", {
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                credits: user.credits,
-            },
-        });
-    } catch (error) {
-        console.error("Error in loginUser:", error);
+    } catch {
         return response(res, 500, "Internal server error");
+    }
+};
+
+export const refreshTokenController = async (req: Request, res: Response) => {
+    try {
+        const oldRefreshToken = req.cookies.refreshToken;
+        if (!oldRefreshToken) {
+            return response(res, 401, "No refresh token provided");
+        }
+
+        // Verify the old refresh token
+        const decoded: any = verifyRefreshToken(oldRefreshToken);
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            return response(res, 401, "Invalid refresh token");
+        }
+
+        const newAccessToken = generateAccessToken((user._id as any).toString());
+        const newRefreshToken = generateRefreshToken((user._id as any).toString());
+
+        const isLocalhost = req.headers.origin?.includes("localhost") ?? false;
+        sendAuthCookies(res, newAccessToken, newRefreshToken, isLocalhost);
+
+        return response(res, 200, "Token refreshed successfully");
+
+    } catch (err) {
+        // Optional: clear cookies on invalid token
+        res.clearCookie("accessToken", { httpOnly: true, secure: true, sameSite: "none" });
+        res.clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "none" });
+
+        return response(res, 401, "Invalid or expired refresh token");
     }
 };
 
@@ -89,18 +106,24 @@ export const getUser = async (req: Request, res: Response): Promise<any> => {
     }
 }
 
-// API to logout 
+// API to logout
 export const logoutUser = (req: Request, res: Response) => {
     const isLocalhost = req.headers.origin?.includes("localhost");
 
-    res.clearCookie("authToken", {
+    res.clearCookie("accessToken", {
         httpOnly: true,
         secure: !isLocalhost,
         sameSite: isLocalhost ? "lax" : "none",
         path: "/",
     });
 
-    return response(res, 200, "Logged out successfully");
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: !isLocalhost,
+        sameSite: isLocalhost ? "lax" : "none",
+        path: "/",
+    });
+    response(res, 200, "Logged out successfully")
 };
 
 

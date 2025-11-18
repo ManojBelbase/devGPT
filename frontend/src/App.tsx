@@ -1,18 +1,30 @@
 // src/App.tsx
-import { useRoutes } from "react-router-dom";
-import "./assets/prism.css";
-import { appRoutes } from "./routes/Routes";
-import { Toaster } from "react-hot-toast";
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from './redux/store';
+import { Routes, Route } from 'react-router-dom';
+import { appRoutes } from './routes/Routes';
+import { getCurrentUser } from './redux/thunks/authThunk';
 
-function App() {
-  const routes = useRoutes(appRoutes);
+
+export default function App() {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(getCurrentUser()); // Runs once on mount
+  }, [dispatch]);
 
   return (
-    <>
-      <Toaster position="top-right" />
-      {routes}
-    </>
+
+    <Routes>
+
+      {appRoutes.map((r, i) => (
+        <Route key={i} path={r.path} element={r.element}>
+          {r.children?.map((c, j) => (
+            <Route key={j} index={c.index} path={c.path} element={c.element} />
+          ))}
+        </Route>
+      ))}
+    </Routes>
   );
 }
-
-export default App;

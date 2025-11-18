@@ -5,8 +5,8 @@ import Layout from "../layout/Layout";
 import CommunityPageIndex from "../pages/community/CommunityPageIndex";
 import CreditPageIndex from "../pages/credit/CreditPageIndex";
 import LoginPageIndex from "../pages/login/LoginPageIndex";
-import ProtectedRoute from "./ProtectedRoute";
-import PublicRoute from "./PublicRoute";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { PublicRoute } from "./PublicRoute";
 
 
 export const appRoutes = [

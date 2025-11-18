@@ -1,85 +1,101 @@
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import { useAuth } from '../../context/AuthContext';
-import { useAppContext } from '../../context/AppContext';
 
-export default function LoginPageIndex() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const { login, loading: authLoading } = useAuth();
-    const { navigate } = useAppContext();
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginUser, registerUser } from "../../redux/thunks/authThunk";
+import SocialAuthButtons from "./components/SocialAuthButtons";
+import toast from "react-hot-toast";
 
-    const handleSubmit = async (e: React.FormEvent) => {
+const LoginPage = () => {
+    const dispatch = useDispatch<any>();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isRegister, setIsRegister] = useState(false);
+    const [name, setName] = useState("");
+
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
+        if (isRegister) {
+            const res = await dispatch(registerUser({ name, email, password })).unwrap();
+            console.log(res, "ree")
+            if (res.status === "success") {
+                toast.success(res.message)
+            } else {
+                toast.success(res.message)
+            }
+        } else {
+            const res = await dispatch(loginUser({ email, password })).unwrap();
+            console.log(res, "red")
+            if (res.status === "success") {
 
-        if (!email || !password) {
-            toast.error('Please fill all fields');
-            return;
+                toast.success(res.message)
+            } else if (res.status === "error") {
+                toast.error(res.message)
+            }
         }
 
-        if (isSubmitting) return;
-
-        setIsSubmitting(true);
-
-        try {
-            await login(email, password);
-
-            // Wait a bit for state to update, then navigate
-            await new Promise(resolve => setTimeout(resolve, 200));
-            navigate('/');
-        } catch (err: any) {
-            console.error('Login error:', err);
-            // Error is already toasted in AuthContext
-        } finally {
-            setIsSubmitting(false);
-        }
     };
 
-    const isLoading = authLoading || isSubmitting;
-
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-4 p-8 py-12 w-80 sm:w-96 bg-white rounded-lg shadow-xl border"
-            >
-                <h2 className="text-2xl font-bold text-center text-purple-700">User Login</h2>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <form onSubmit={handleSubmit} style={{ maxWidth: "400px", width: "100%", padding: "32px", border: "1px solid #e5e7eb", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)" }}>
+                <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "24px", textAlign: "center" }}>
+                    {isRegister ? "Create Account" : "Login"}
+                </h2>
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Email</label>
+                {isRegister && (
                     <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100"
-                        placeholder="you@example.com"
-                        disabled={isLoading}
-                        required
+                        type="text"
+                        placeholder="Full Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        style={{ width: "100%", padding: "10px", marginBottom: "16px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "14px" }}
                     />
-                </div>
+                )}
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100"
-                        placeholder="••••••••"
-                        disabled={isLoading}
-                        required
-                    />
-                </div>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{ width: "100%", padding: "10px", marginBottom: "16px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                />
+
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{ width: "100%", padding: "10px", marginBottom: "24px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "14px", boxSizing: "border-box" }}
+                />
 
                 <button
                     type="submit"
-                    disabled={isLoading}
-                    className="bg-purple-600 hover:bg-indigo-600 text-white py-2 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    style={{ width: "100%", backgroundColor: "#9333ea", color: "white", padding: "10px", borderRadius: "6px", border: "none", fontSize: "16px", fontWeight: "600", cursor: "pointer" }}
                 >
-                    {isLoading ? 'Logging in...' : 'Login'}
+                    {isRegister ? "Register" : "Login"}
                 </button>
+
+                <div style={{ marginTop: "20px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ flex: 1, height: "1px", backgroundColor: "#e5e7eb" }}></div>
+                    <span style={{ fontSize: "14px", color: "#6b7280" }}>OR</span>
+                    <div style={{ flex: 1, height: "1px", backgroundColor: "#e5e7eb" }}></div>
+                </div>
+
+                <SocialAuthButtons />
+
+                <div style={{ marginTop: "20px", textAlign: "center", fontSize: "14px", color: "#6b7280" }}>
+                    {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+                    <button
+                        type="button"
+                        onClick={() => setIsRegister(!isRegister)}
+                        style={{ color: "#9333ea", cursor: "pointer", fontWeight: "600", border: "none", background: "none" }}
+                    >
+                        {isRegister ? "Login" : "Register"}
+                    </button>
+                </div>
             </form>
         </div>
     );
-}
+};
+
+export default LoginPage;

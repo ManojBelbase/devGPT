@@ -1,75 +1,95 @@
-import { useEffect, useState, useRef } from "react"
-import { Icon } from "@iconify/react"
-import { useAppContext } from "../context/AppContext"
-import { useChats } from "../context/ChatContext"
-import { useAuth } from "../context/AuthContext"
-import Logo from "./shared/Logo"
-import Message from "./Message"
-import Loader from "./ChatLoader"
-import toast from "react-hot-toast"
-import { generateImage, generateText } from "../api/chatApi"
+// src/components/ChatBox.tsx
+import { useEffect, useRef, useState } from "react";
+import { Icon } from "@iconify/react";
+
+import toast from "react-hot-toast";
+import Loader from "./ChatLoader";        // your loader component
+import Message from "./Message";          // your Message component
+import Logo from "./shared/Logo";         // your logo
+import { useAuth } from "../hooks/useAuth";
+import { useChat } from "../hooks/useChat";
+import { useAppContext } from "../context/AppContext";
+import { generateImage, generateText } from "../api/chatApi";
 
 const ChatBox = () => {
-    const { theme } = useAppContext()
-    const { user } = useAuth()
-    const { selectedChat, refreshChats } = useChats()
+    const { user } = useAuth();
+    const { selectedChat, refreshChats } = useChat();
 
-    const [messages, setMessages] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
-    const [prompt, setPrompt] = useState("")
-    const [mode, setMode] = useState<"text" | "image">("text")
-    const endRef = useRef<HTMLDivElement>(null)
+    const { theme } = useAppContext(); // optional: remove if you moved theme to Redux too
 
-    // 1. Load messages when a chat is selected
+    const [messages, setMessages] = useState<any[]>([]);
+    const [prompt, setPrompt] = useState("");
+    const [mode, setMode] = useState<"text" | "image">("text");
+    const [loading, setLoading] = useState(false);
+    const endRef = useRef<HTMLDivElement>(null);
+
+    // Load messages from selected chat
     useEffect(() => {
-        if (selectedChat?.messages) setMessages(selectedChat.messages)
-        else setMessages([])
-        setLoading(false)
-    }, [selectedChat])
+        if (selectedChat?.messages) {
+            setMessages(selectedChat.messages);
+        } else {
+            setMessages([]);
+        }
+    }, [selectedChat]);
 
-    // 2. Auto‑scroll to bottom
-    const scroll = () => endRef.current?.scrollIntoView({ behavior: "smooth" })
-    useEffect(() => scroll(), [messages])
+    // Auto-scroll to bottom
+    useEffect(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
-    // 3. Submit → call correct API → update UI instantly
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!prompt.trim() || !user) return
+        e.preventDefault();
+        if (!prompt.trim() || !user) return;
 
-        const userMsg = { role: "user", type: mode, content: prompt }
+        const userMessage = {
+            role: "user",
+            type: mode,
+            content: prompt,
+        };
 
-        setMessages(p => [...p, userMsg])
-        setPrompt("")
-        setLoading(true)
+        // Optimistic UI
+        setMessages((prev) => [...prev, userMessage]);
+        setPrompt("");
+        setLoading(true);
+
         try {
-            const payload = { prompt, chatId: selectedChat?._id }
+            const payload = {
+                prompt,
+                chatId: selectedChat?._id,
+            };
 
-            let aiMsg: any
+            let aiResponse: any;
+
             if (mode === "text") {
-                const { data } = await generateText(payload)
-                aiMsg = data.data
-                refreshChats?.()
+                const { data } = await generateText(payload);
+                aiResponse = data.data; // adjust if your API structure is different
             } else {
-                const { data } = await generateImage(payload)
-                aiMsg = data.data
+                const { data } = await generateImage(payload);
+                aiResponse = data.data;
             }
 
-            setMessages(p => [...p, aiMsg])
+            setMessages((prev) => [...prev, aiResponse]);
 
-            if (!selectedChat) await refreshChats()
+            // Refresh chat list (updates message count, last message, etc.)
+            await refreshChats();
+
+            // If it was a new chat (no selectedChat before), refresh again to get the new chat ID
+            if (!selectedChat) await refreshChats();
         } catch (err: any) {
-            toast.error(err.response?.data?.message || "Generation failed")
-            setMessages(p => p.filter(m => m !== userMsg))
+            toast.error(err.response?.data?.message || "Something went wrong");
+            // Remove user message on error
+            setMessages((prev) => prev.filter((m) => m !== userMessage));
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <div
             className={`h-[90vh] flex flex-col mx-5 md:mx-10 mt-5 md:mt-10 xl:mx-30 2xl:pr-40 ${theme === "dark" ? "text-white" : "text-black"
                 }`}
         >
+            {/* Messages Area */}
             <div className="flex-1 overflow-y-auto scrollbar-hide">
                 {messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center gap-4">
@@ -102,7 +122,7 @@ const ChatBox = () => {
                 )}
             </div>
 
-            {/* ---------- Input ---------- */}
+            {/* Input Area */}
             <form onSubmit={handleSubmit} className="w-full mt-2">
                 <div
                     className={`flex items-center gap-3 px-4 py-2 border rounded-full transition-all ${theme === "dark"
@@ -110,10 +130,11 @@ const ChatBox = () => {
                         : "border-gray-300 bg-white focus-within:border-blue-500 focus-within:bg-gray-50"
                         }`}
                 >
+                    {/* Mode Switcher */}
                     <div className="relative">
                         <select
                             value={mode}
-                            onChange={e => setMode(e.target.value as any)}
+                            onChange={(e) => setMode(e.target.value as "text" | "image")}
                             className={`appearance-none pr-6 text-sm bg-transparent outline-none cursor-pointer ${theme === "dark" ? "text-gray-300" : "text-gray-700"
                                 }`}
                         >
@@ -127,11 +148,12 @@ const ChatBox = () => {
                         />
                     </div>
 
+                    {/* Prompt Input */}
                     <input
                         type="text"
                         placeholder={mode === "image" ? "Generate an image ..." : "Type your message ..."}
                         value={prompt}
-                        onChange={e => setPrompt(e.target.value)}
+                        onChange={(e) => setPrompt(e.target.value)}
                         className={`flex-1 bg-transparent outline-none text-sm placeholder-opacity-60 ${theme === "dark"
                             ? "text-white placeholder-gray-500"
                             : "text-black placeholder-gray-400"
@@ -139,6 +161,7 @@ const ChatBox = () => {
                         disabled={loading}
                     />
 
+                    {/* Send Button */}
                     <button
                         type="submit"
                         disabled={!prompt.trim() || loading}
@@ -156,7 +179,7 @@ const ChatBox = () => {
                 </div>
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default ChatBox
+export default ChatBox;
