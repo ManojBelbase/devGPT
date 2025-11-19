@@ -7,7 +7,7 @@ import type { AppDispatch } from "../../redux/store";
 import { useAuth } from "../../hooks/useAuth";
 import { useChat } from "../../hooks/useChat";
 import { useAppContext } from "../../context/AppContext";
-import { createChatThunk } from "../../redux/thunks/chatThunk";
+import { createChatThunk, deleteChatThunk } from "../../redux/thunks/chatThunk";
 import Logo from "./Logo";
 import { FronendRoutes } from "../../constant/FrontendRoutes";
 import { logoutUser } from "../../redux/thunks/authThunk";
@@ -25,9 +25,9 @@ const Sidebar = () => {
     const filteredChats = chats.filter((chat: any) => {
         const title = (chat?.title || "New Chat").toLowerCase();
         const messages = chat?.messages || [];
-        const inTitle = title?.includes(searchTerm.toLowerCase());
+        const inTitle = title?.includes(searchTerm?.toLowerCase());
         const inMessages = messages?.some((msg: any) =>
-            (msg?.content || "").toString().toLowerCase().includes(searchTerm.toLowerCase())
+            (msg?.content || "").toString().toLowerCase().includes(searchTerm?.toLowerCase())
         );
         return inTitle || inMessages;
     });
@@ -50,26 +50,28 @@ const Sidebar = () => {
     // Delete chat
     const handleDelete = async (e: React.MouseEvent, chatId: string) => {
         e.stopPropagation();
-        if (!window.confirm("Delete this chat permanently?")) return;
-
         try {
+            await dispatch(deleteChatThunk(chatId)).unwrap();
             toast.success("Chat deleted");
-            refreshChats(); // refresh list from server
+
+            refreshChats();
+
             if (selectedChat?._id === chatId) {
-                selectChat(null); // clear selection
+                selectChat(null);
+                navigate("/");
             }
         } catch (err: any) {
-            toast.error(err.response?.data?.message || "Failed to delete chat");
+            toast.error(err || "Failed to delete chat");
         }
     };
 
     // Get preview text (last user message or title)
     const getPreview = (chat: any) => {
-        const lastUserMsg = [...(chat.messages || [])]
+        const lastUserMsg = [...(chat?.messages || [])]
             .reverse()
-            .find((m: any) => m.role === "user");
+            .find((m: any) => m?.role === "user");
 
-        if (!lastUserMsg) return chat.title || "New Chat";
+        if (!lastUserMsg) return chat?.title || "New Chat";
 
         const content = lastUserMsg.content ?? "";
         const isImage = lastUserMsg.type === "image" || /\.(jpe?g|png|gif|webp)$/i.test(content);
@@ -88,12 +90,6 @@ const Sidebar = () => {
         const hasCustomTitle = !!((selectedChat as any).title && (selectedChat as any).title !== "New Chat");
 
         if (!firstUserMsg || hasCustomTitle) return;
-
-
-
-        // Note: We don't update title in Redux here because backend should return updated title
-        // But if you want instant local update, dispatch an action or refresh
-        // For now, just rely on refreshChats() after message send
     }, [selectedChat?.messages]);
 
     // Optional: refresh on mount or focus
@@ -176,9 +172,9 @@ const Sidebar = () => {
                 ) : (
                     filteredChats.map((chat: any) => (
                         <div
-                            key={chat._id}
+                            key={chat?._id}
                             onClick={() => selectChat(chat)}
-                            className={`group flex items-center justify-between p-3 rounded-md cursor-pointer transition-all border ${selectedChat?._id === chat._id
+                            className={`group flex items-center justify-between p-3 rounded-md cursor-pointer transition-all border ${selectedChat?._id === chat?._id
                                 ? theme === "dark"
                                     ? "border-white/30 bg-white/10"
                                     : "border-gray-400 bg-gray-100"
@@ -195,14 +191,14 @@ const Sidebar = () => {
                                     {getPreview(chat)}
                                 </p>
                                 <span className="text-xs text-gray-500">
-                                    {moment(chat.updatedAt).fromNow()}
+                                    {moment(chat?.updatedAt).fromNow()}
                                 </span>
                             </div>
 
                             <Icon
                                 icon="material-symbols:delete-outline"
                                 fontSize={18}
-                                onClick={(e) => handleDelete(e, chat._id)}
+                                onClick={(e) => handleDelete(e, chat?._id)}
                                 className={`opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer ${theme === "dark"
                                     ? "text-white/70 hover:text-red-400"
                                     : "text-gray-600 hover:text-red-600"

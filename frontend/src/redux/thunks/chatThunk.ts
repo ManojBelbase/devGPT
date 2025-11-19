@@ -1,6 +1,6 @@
 // src/redux/thunks/chatThunk.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getChats, createChat } from "../../api/chatApi";
+import { getChats, createChat, deleteChat } from "../../api/chatApi";
 
 export const getChatsThunk = createAsyncThunk("chat/getChats", async (_, { rejectWithValue }) => {
     try {
@@ -11,11 +11,27 @@ export const getChatsThunk = createAsyncThunk("chat/getChats", async (_, { rejec
     }
 });
 
-export const createChatThunk = createAsyncThunk("chat/createChat", async (_, { rejectWithValue }) => {
-    try {
-        const { data } = await createChat();
-        return data; // { chat: newChat }
-    } catch (err: any) {
-        return rejectWithValue(err.response?.data?.message);
+export const createChatThunk = createAsyncThunk(
+    "chat/createChat",
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await createChat();
+            return data.chat || data;
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.message || "Failed to create chat");
+        }
     }
-});
+);
+
+// src/redux/thunks/chatThunk.ts
+export const deleteChatThunk = createAsyncThunk(
+    "chat/deleteChat",
+    async (chatId: string, { rejectWithValue }) => {
+        try {
+            await deleteChat({ chatId }); // This calls your API
+            return chatId; // Return the deleted chat ID so we can remove it from state
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.message || "Failed to delete chat");
+        }
+    }
+);
