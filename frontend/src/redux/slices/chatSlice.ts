@@ -1,12 +1,13 @@
 // src/redux/slices/chatSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { createChatThunk, getChatsThunk } from "../thunks/chatThunk";
+import { getChatsThunk } from "../thunks/chatThunk";
 
 interface Chat {
     _id: string;
     messages: any[];
     createdAt?: string;
     // add more fields if needed
+    title: string
 }
 
 interface ChatState {
@@ -52,10 +53,7 @@ const chatSlice = createSlice({
                 state.chats = [];
             })
 
-            .addCase(createChatThunk.fulfilled, (state, action) => {
-                state.chats.unshift(action.payload.chat);
-                state.selectedChat = action.payload.chat;
-            });
+
     },
 });
 

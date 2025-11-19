@@ -21,7 +21,7 @@ export default function App() {
       {appRoutes.map((r, i) => (
         <Route key={i} path={r.path} element={r.element}>
           {r.children?.map((c, j) => (
-            <Route key={j} index={c.index} path={c.path} element={c.element} />
+            <Route key={j} path={c.path} element={c.element} />
           ))}
         </Route>
       ))}
