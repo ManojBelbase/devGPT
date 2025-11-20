@@ -8,8 +8,8 @@ export const sendAuthCookies = (
 ) => {
     const cookieConfig = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
+        secure: !isLocalhost,
+        sameSite: isLocalhost ? ("lax" as const) : ("none" as const),
         path: "/",
     };
 
