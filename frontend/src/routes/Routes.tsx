@@ -4,6 +4,7 @@ import { FronendRoutes } from "../constant/FrontendRoutes";
 import Layout from "../layout/Layout";
 import CommunityPageIndex from "../pages/community/CommunityPageIndex";
 import CreditPageIndex from "../pages/credit/CreditPageIndex";
+import PaymentSuccess from "../pages/credit/PaymentSuccess";
 import LoginPageIndex from "../pages/login/LoginPageIndex";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
@@ -38,7 +39,7 @@ export const appRoutes = [
             // Other protected pages
             { path: FronendRoutes.COMMUNITY, element: <CommunityPageIndex /> },
             { path: FronendRoutes.CREDITS, element: <CreditPageIndex /> },
-            { path: FronendRoutes.PAYMENT_SUCCESS, element: <CreditPageIndex /> },
+            { path: FronendRoutes.PAYMENT_SUCCESS, element: <PaymentSuccess /> },
 
             // Optional: Catch-all redirect (if someone types wrong URL under /)
             { path: "*", element: <Navigate to={FronendRoutes.CHAT} replace /> },
