@@ -34,12 +34,11 @@ export const purchasePlan = async (req: Request, res: Response): Promise<any> =>
             isPaid: false,
         });
 
-        console.log('Initiating Khalti payment for transaction:', transaction._id);
 
         // Initiate payment with Khalti
         const khaltiResponse = await KhaltiService.initiatePayment({
-            returnUrl: 'http://localhost:3000/payment-success',
-            websiteUrl: 'http://localhost:3000',
+            returnUrl: 'https://devgptai.vercel.app/payment-success',
+            websiteUrl: 'https://devgptai.vercel.app/',
             amount: KhaltiService.formatAmount(plan.price),
             purchaseOrderId: (transaction as any)._id.toString(),
             purchaseOrderName: plan.name,

@@ -1,9 +1,9 @@
 // src/pages/PaymentSuccess.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Icon } from "@iconify/react";
+import { api } from "../../api/api";
 
 const PaymentSuccess = () => {
     const location = useLocation();
@@ -20,8 +20,7 @@ const PaymentSuccess = () => {
 
         const verify = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:8001/api/verify-payment?pidx=${pidx}`
+                const res = await api.get(`/verify-payment?pidx=${pidx}`
                 );
 
                 if (res.data.status === "Success") {
@@ -32,7 +31,7 @@ const PaymentSuccess = () => {
                         `Payment completed! Credits: ${res.data.data.credits} | TxID: ${res.data.data.transactionId}`
                     );
                     // Optional: redirect to dashboard after 3s
-                    setTimeout(() => navigate("/dashboard"), 3000);
+                    setTimeout(() => navigate("/chat"), 3000);
                 } else {
                     toast.error(res.data.message);
                     setMsg(res.data.message);

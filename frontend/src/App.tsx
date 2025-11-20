@@ -5,13 +5,13 @@ import type { AppDispatch } from './redux/store';
 import { Routes, Route } from 'react-router-dom';
 import { appRoutes } from './routes/Routes';
 import { getCurrentUser } from './redux/thunks/authThunk';
-
+import './assets/prism.css'
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(getCurrentUser()); // Runs once on mount
+    dispatch(getCurrentUser());
   }, [dispatch]);
 
   return (

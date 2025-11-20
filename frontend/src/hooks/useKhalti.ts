@@ -8,7 +8,7 @@ export const useKhalti = () => {
     const initiate = async (planId: string) => {
         setLoading(true);
         try {
-            const res = await api.post("api/payment/purchase-plan", { planId });
+            const res = await api.post("/payment/purchase-plan", { planId });
             const { payment_url } = res.data.data;
             window.location.href = payment_url;
         } catch (err: any) {
