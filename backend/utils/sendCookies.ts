@@ -10,7 +10,6 @@ export const sendAuthCookies = (
         httpOnly: true,
         secure: !isLocalhost,
         sameSite: isLocalhost ? ("lax" as const) : ("none" as const),
-        domain: isLocalhost ? "localhost" : "devgptai.vercel.app",
         path: "/",
     };
 
