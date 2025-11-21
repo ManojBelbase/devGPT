@@ -4,7 +4,7 @@ import { store } from "../redux/store";
 import { logout } from "../redux/slices/authSlice";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:8001/api",
+    baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
 });
 
