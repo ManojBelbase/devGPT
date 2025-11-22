@@ -14,11 +14,11 @@
     "@reduxjs/toolkit": "^2.10.1",
     "@tailwindcss/vite": "^4.1.16",
     "@types/prismjs": "^1.26.5",
-    "ai-response-parser": "^1.0.6",
+    "ai-response-parser": "^1.2.3",
     "axios": "^1.13.2",
     "iconify": "^1.4.0",
     "marked": "^17.0.0",
-    "moment": "^2.30.1",
+    "miti-pariwartan": "^1.6.3",
     "prismjs": "^1.30.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -27,6 +27,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.6",
     "react-syntax-highlighter": "^16.1.0",
+    "react-textarea-autosize": "^8.5.9",
     "tailwindcss": "^4.1.16"
   },
   "devDependencies": {

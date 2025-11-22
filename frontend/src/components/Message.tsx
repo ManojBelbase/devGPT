@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react"
 import { useEffect } from "react"
 import Markdown from "react-markdown"
 import Prism from "prismjs"
-import moment from "moment"
+import { fromNow } from "miti-pariwartan"
 
 const Message = ({ message }: any) => {
 
@@ -43,7 +43,7 @@ const Message = ({ message }: any) => {
                             <Markdown>{message?.content}</Markdown>
                         </div>}
 
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{moment(message?.timestamp).fromNow()}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{fromNow(message?.timestamp)}</span>
                     </div>
                 </div>
             )}

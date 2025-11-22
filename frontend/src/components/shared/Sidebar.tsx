@@ -1,8 +1,8 @@
 // src/components/Sidebar.tsx
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import moment from "moment";
 import toast from "react-hot-toast";
+import { fromNow } from "miti-pariwartan";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../redux/store";
 import { useAuth } from "../../hooks/useAuth";
@@ -199,7 +199,7 @@ const Sidebar = () => {
                                         {getPreview(chat)}
                                     </p>
                                     <span className="text-xs text-gray-500">
-                                        {moment(chat.updatedAt).fromNow()}
+                                        {fromNow(chat.updatedAt)}
                                     </span>
                                 </div>
 
