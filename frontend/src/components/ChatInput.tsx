@@ -45,7 +45,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     };
 
     return (
-        <div className=" border-gray-200 dark:border-gray-800 bg-white dark:bg-black z-10 -mt-4">
+        <div className=" border-gray-200 dark:border-gray-800  z-10 -mt-4">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-4 w-full ">
                 <div className="relative mx-auto w-full">
                     <form

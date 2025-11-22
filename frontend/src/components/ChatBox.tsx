@@ -106,7 +106,7 @@ const ChatBox = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-[90vh] sm:h-screen md:h-screen lg:h-screen xl:h-screen 2xl:h-screen">
             {/* Header */}
             {/* <div className="border-b border-gray-200 dark:border-gray-800 px-1 py-2 sm:py-3 sticky top-0   bg-linear-to-b from-white to-gray-100
   dark:bg-linear-to-b dark:from-black dark:to-gray-900 z-20">
