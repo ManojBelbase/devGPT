@@ -31,10 +31,12 @@ const ChatBox = () => {
     }, [selectedChat]);
 
     useEffect(() => {
+        // Scroll to the bottom of the chat when messages or loading state changes
         endRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, loading]);
 
     useEffect(() => {
+        // Focus on the input when component mounts
         inputRef.current?.focus();
     }, []);
 
@@ -81,7 +83,12 @@ const ChatBox = () => {
 
             if (mode === "text") {
                 const { data } = await generateText(payload);
-                aiResponse = { ...data.data, role: "assistant", timestamp: new Date() };
+                // Ensure text response is parsed correctly if using AIResponseParser
+                aiResponse = {
+                    ...data.data,
+                    role: "assistant",
+                    timestamp: new Date()
+                };
             } else {
                 const { data } = await generateImage(payload);
                 aiResponse = {
@@ -94,10 +101,12 @@ const ChatBox = () => {
             }
 
             setMessages((prev) => [...prev, aiResponse]);
+            // Refresh chats list to update the latest message and title
             await refreshChats();
-            if (!selectedChat) await refreshChats();
+            if (!selectedChat) await refreshChats(); // Ensure the first chat gets created and selected
         } catch (err: any) {
             toast.error(err.response?.data?.message || "Something went wrong");
+            // Remove the user message if the request failed
             setMessages((prev) => prev.slice(0, -1));
         } finally {
             setLoading(false);
@@ -106,25 +115,26 @@ const ChatBox = () => {
     };
 
     return (
-        <div className="flex flex-col h-[90vh] sm:h-screen md:h-screen lg:h-screen xl:h-screen 2xl:h-screen">
-            {/* Header */}
-            {/* <div className="border-b border-gray-200 dark:border-gray-800 px-1 py-2 sm:py-3 sticky top-0   bg-linear-to-b from-white to-gray-100
-  dark:bg-linear-to-b dark:from-black dark:to-gray-900 z-20">
+        <div className="flex flex-col h-screen overflow-hidden">
+
+            {/* Header (Placeholder for the menu button/title) */}
+            <div className={`border-b ${isDark ? "border-gray-800 bg-gray-950" : "border-gray-200 bg-white"} px-4 py-3 shrink-0 z-20`}>
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
-                    <h1 className="text-base sm:text-lg font-medium truncate max-w-[70vw]">
+
+                    <h1 className="text-base w-full sm:text-lg font-medium truncate sm:max-w-[70vw] mx-auto sm:mx-0">
                         {selectedChat?.title || "New Chat"}
                     </h1>
-                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
                         {mode === "text" ? "Text Mode" : "Image Mode"}
                     </span>
                 </div>
-            </div> */}
+            </div>
 
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 pb-28 sm:pb-32">
-                <div className="max-w-5xl mx-auto px-2 sm:px-6 py-4 sm:py-8">
+            {/* Chat messages area with proper scrolling */}
+            <div className="flex-1 mb-28 sm:mb-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
+                <div className="max-w-5xl mx-auto px-2 sm:px-6 py-4 sm:py-8 pb-4">
                     {messages.length === 0 && !loading ? (
-                        <div className=" flex flex-col  items-center ">
+                        <div className="flex flex-col items-center pt-20 sm:pt-40">
                             {/* <Logo /> */}
                             <p className="text-2xl sm:text-4xl font-light text-center text-gray-500 dark:text-gray-400 mt-4">
                                 How can I help you today?
@@ -150,9 +160,9 @@ const ChatBox = () => {
                                         key={i}
                                         className={`flex gap-3 sm:gap-4 ${isUser ? "justify-end" : "justify-start"}`}
                                     >
-                                        {/* AI Avatar */}
+                                        {/* AI Avatar - Hidden on small screens for cleaner look */}
                                         {!isUser && (
-                                            <div className="hidden sm:flex w-10 h-10 rounded-full mt-4 -mr-3 bg-linear-to-r from-purple-500 to-blue-500 items-center justify-center shrink-0">
+                                            <div className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 rounded-full mt-4 -mr-3 bg-linear-to-r from-purple-500 to-blue-500 items-center justify-center shrink-0">
                                                 <Icon icon="hugeicons:developer" className="text-white text-xl" />
                                             </div>
                                         )}
@@ -160,27 +170,28 @@ const ChatBox = () => {
                                         {/* Message Bubble */}
                                         <div
                                             className={`
-                        p-3 sm:p-3 rounded-xl ${isUser ? "rounded-br-md" : "rounded-tl-md"}
-                        ${messageBg} 
-                        max-w-full sm:max-w-[80%]
-                      `}
+                                                p-2 sm:p-3 rounded-xl ${isUser ? "rounded-br-md" : "rounded-tl-md"}
+                                                ${messageBg} 
+                                                max-w-full sm:max-w-[80%]
+                                                ${isImageMessage ? "p-1 sm:p-2" : "text-sm sm:text-base"} 
+                                            `}
                                         >
                                             {isImageMessage ? (
                                                 <div className="flex flex-col space-y-1">
-                                                    {/* Show caption only if it's not the image URL */}
+                                                    {/* Show caption */}
                                                     {msg.content &&
                                                         typeof msg.content === "string" &&
                                                         !msg.content.includes("https://ik.imagekit.io") && (
-                                                            <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                                            <p className={`text-xs sm:text-sm px-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                                                                 {msg.content}
                                                             </p>
                                                         )}
 
-                                                    <div className="relative group grid-cols-2 grid">
+                                                    <div className="relative group grid-cols-1 grid max-w-full">
                                                         <img
                                                             src={imageUrl!}
                                                             alt="AI Generated"
-                                                            className=" max-w-full w-full h-auto transition-transform group-hover:scale-101"
+                                                            className=" max-w-full w-full h-auto transition-transform group-hover:scale-101 rounded-lg"
                                                             loading="lazy"
                                                             onError={(e) => {
                                                                 e.currentTarget.src = "/fallback-image.png";
@@ -207,9 +218,9 @@ const ChatBox = () => {
                                             )}
                                         </div>
 
-                                        {/* User Avatar */}
+                                        {/* User Avatar - Hidden on small screens for cleaner look */}
                                         {isUser && (
-                                            <div className="hidden sm:flex w-10 h-10 rounded-full bg-gray-600 items-center justify-center text-white font-bold text-sm shrink-0">
+                                            <div className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-600 items-center justify-center text-white font-bold text-sm shrink-0">
                                                 {user?.name?.[0] || "U"}
                                             </div>
                                         )}
@@ -220,10 +231,10 @@ const ChatBox = () => {
                             {/* Loading State */}
                             {loading && (
                                 <div className="flex gap-3 sm:gap-4">
-                                    <div className="hidden sm:flex w-10 h-10 rounded-full bg-linear-to-r from-purple-500 to-blue-500 items-center justify-center shrink-0">
-                                        <Icon icon="hugeicons:developer" className="text-white text-2xl" />
+                                    <div className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-linear-to-r from-purple-500 to-blue-500 items-center justify-center shrink-0">
+                                        <Icon icon="hugeicons:developer" className="text-white text-xl" />
                                     </div>
-                                    <div className={`rounded-2xl px-4 py-4 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}>
+                                    <div className={`rounded-xl px-4 py-4 ${isDark ? "bg-gray-800" : "bg-gray-100"} max-w-[80%]`}>
                                         <ChatLoader />
                                     </div>
                                 </div>
