@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Icon } from "@iconify/react";
-import { api } from "../../api/api";
+import api from "../../api/axiosInstance";
 
 const PaymentSuccess = () => {
     const location = useLocation();

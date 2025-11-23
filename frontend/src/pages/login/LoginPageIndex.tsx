@@ -4,9 +4,10 @@ import { useDispatch } from "react-redux";
 import { loginUser, registerUser } from "../../redux/thunks/authThunk";
 import SocialAuthButtons from "./components/SocialAuthButtons";
 import toast from "react-hot-toast";
+import type { AppDispatch } from "../../redux/store";
 
 const LoginPage = () => {
-    const dispatch = useDispatch<any>();
+    const dispatch = useDispatch<AppDispatch>();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isRegister, setIsRegister] = useState(false);
@@ -14,26 +15,31 @@ const LoginPage = () => {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        if (isRegister) {
-            const res = await dispatch(registerUser({ name, email, password })).unwrap();
-            console.log(res, "ree")
-            if (res.status === "success") {
-                toast.success(res.message)
+
+        try {
+            let res;
+
+            if (isRegister) {
+                res = await dispatch(
+                    registerUser({ name, email, password })
+                ).unwrap();
             } else {
-                toast.success(res.message)
+                res = await dispatch(
+                    loginUser({ email, password })
+                ).unwrap();
             }
-        } else {
-            const res = await dispatch(loginUser({ email, password })).unwrap();
-            console.log(res, "red")
+
             if (res.status === "success") {
-
-                toast.success(res.message)
-            } else if (res.status === "error") {
-                toast.error(res.message)
+                toast.success(res.message);
+            } else {
+                toast.error(res.message);
             }
+        } catch (err: any) {
+            toast.error(err?.message || "Something went wrong");
         }
-
     };
+
+
 
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>

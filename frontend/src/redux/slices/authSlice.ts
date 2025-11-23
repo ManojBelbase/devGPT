@@ -1,12 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentUser, loginUser, logoutUser, registerUser } from "../thunks/authThunk";
+import {
+    getCurrentUser,
+    loginUser,
+    logoutUser,
+    registerUser
+} from "../thunks/authThunk";
 
 interface AuthState {
     user: any | null;
     loading: boolean;
 }
 
-const initialState: AuthState = { user: null, loading: true };
+const initialState: AuthState = {
+    user: null,
+    loading: true,
+};
 
 const authSlice = createSlice({
     name: "auth",
@@ -19,18 +27,48 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loginUser.pending, (state) => { state.loading = true; })
-            .addCase(loginUser.fulfilled, (state, action) => { state.user = action.payload; state.loading = false; })
-            .addCase(loginUser.rejected, (state) => { state.user = null; state.loading = false; })
 
-            .addCase(registerUser.pending, (state) => { state.loading = true; })
-            .addCase(registerUser.fulfilled, (state, action) => { state.user = action.payload; state.loading = false; })
-            .addCase(registerUser.rejected, (state) => { state.user = null; state.loading = false; })
+            // ---------------- LOGIN ----------------
+            .addCase(loginUser.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                // backend returns { status, message, data }
+                state.user = action.payload.data ?? null;
+                state.loading = false;
+            })
+            .addCase(loginUser.rejected, (state) => {
+                state.user = null;
+                state.loading = false;
+            })
 
-            .addCase(getCurrentUser.pending, (state) => { state.loading = true; })
-            .addCase(getCurrentUser.fulfilled, (state, action) => { state.user = action.payload; state.loading = false; })
-            .addCase(getCurrentUser.rejected, (state) => { state.user = null; state.loading = false; })
+            // ---------------- REGISTER ----------------
+            .addCase(registerUser.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(registerUser.fulfilled, (state, action) => {
+                state.user = action.payload.data ?? null;
+                state.loading = false;
+            })
+            .addCase(registerUser.rejected, (state) => {
+                state.user = null;
+                state.loading = false;
+            })
 
+            // ---------------- GET CURRENT USER ----------------
+            .addCase(getCurrentUser.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getCurrentUser.fulfilled, (state, action) => {
+                state.user = action.payload.data ?? null;
+                state.loading = false;
+            })
+            .addCase(getCurrentUser.rejected, (state) => {
+                state.user = null;
+                state.loading = false;
+            })
+
+            // ---------------- LOGOUT ----------------
             .addCase(logoutUser.fulfilled, (state) => {
                 state.user = null;
                 state.loading = false;
@@ -38,7 +76,7 @@ const authSlice = createSlice({
             .addCase(logoutUser.rejected, (state) => {
                 state.user = null;
                 state.loading = false;
-            })
+            });
     },
 });
 

@@ -13,12 +13,23 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // prevent infinite loop for refresh request
-        if (originalRequest.url.includes("/user/refresh")) {
-            store.dispatch(logout());
+        // List of endpoints that should NEVER trigger refresh
+        const publicEndpoints = [
+            "/user/login",
+            "/user/register",
+            "/user/refresh",
+        ];
+
+        const isPublicEndpoint = publicEndpoints.some(endpoint =>
+            originalRequest.url.includes(endpoint)
+        );
+
+        // If it's a public endpoint (login/register/refresh) → don't retry
+        if (isPublicEndpoint) {
             return Promise.reject(error);
         }
 
+        // Only for protected routes: trigger refresh on 401
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
@@ -27,12 +38,13 @@ api.interceptors.response.use(
                 return api(originalRequest);
             } catch (refreshError) {
                 store.dispatch(logout());
-                return Promise.reject(refreshError);
+                return Promise.reject({ silent: true, cause: refreshError });
             }
         }
 
         return Promise.reject(error);
     }
 );
+
 
 export default api;

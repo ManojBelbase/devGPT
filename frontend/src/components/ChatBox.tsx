@@ -88,7 +88,7 @@ const ChatBox = () => {
                     role: "assistant",
                     type: "image",
                     content: "Here's your generated image:",
-                    imageUrl: data.data.imageUrl || data.data.image, // standardize to imageUrl
+                    imageUrl: data.data.imageUrl || data.data.image,
                     timestamp: new Date(),
                 };
             }
@@ -202,6 +202,7 @@ const ChatBox = () => {
                                                                 ? "#D4D4D4"
                                                                 : "#333333"
                                                     }
+                                                    themeName={isDark ? "github" : "light"}
                                                 />
                                             )}
                                         </div>
