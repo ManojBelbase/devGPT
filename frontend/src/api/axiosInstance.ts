@@ -4,9 +4,13 @@ import { store } from "../redux/store";
 import { logout } from "../redux/slices/authSlice";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL:
+        import.meta.env.MODE === "development"
+            ? import.meta.env.VITE_API_LOCAL
+            : import.meta.env.VITE_API_PROD,
     withCredentials: true,
 });
+
 
 api.interceptors.response.use(
     (response) => response,

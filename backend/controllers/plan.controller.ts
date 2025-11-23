@@ -13,19 +13,21 @@ export const getPlans = async (req: Request, res: Response): Promise<any> => {
         return response(res, 500, 'Internal server error', error.message);
     }
 };
-
 export const purchasePlan = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { planId } = req.body;
+        const { planId, return_url } = req.body; // ← ADD return_url here
         const userId = (req as any).user._id;
 
-        // Find the plan
+        // Validate return_url (security)
+        if (!return_url || !return_url.startsWith('https://devgptai.vercel.app/payment-success')) {
+            return response(res, 400, 'Invalid return URL', null);
+        }
+
         const plan = plans.find((p) => p._id === planId);
         if (!plan) {
             return response(res, 400, 'Invalid Plan', null);
         }
 
-        // Create transaction record
         const transaction = await Transaction.create({
             userId,
             planId: plan._id,
@@ -34,27 +36,21 @@ export const purchasePlan = async (req: Request, res: Response): Promise<any> =>
             isPaid: false,
         });
 
-
-        // Initiate payment with Khalti
+        // Use the dynamic return_url from frontend
         const khaltiResponse = await KhaltiService.initiatePayment({
-            returnUrl: 'https://devgptai.vercel.app/payment-success',
-            websiteUrl: 'https://devgptai.vercel.app/',
+            returnUrl: return_url, // ← NOW DYNAMIC!
+            websiteUrl: 'https://devgptai.vercel.app',
             amount: KhaltiService.formatAmount(plan.price),
             purchaseOrderId: (transaction as any)._id.toString(),
-            purchaseOrderName: plan.name,
+            purchaseOrderName: `${plan.name} Plan`,
             customerInfo: {
-                name: (req as any).user.name || 'Test User',
-                email: (req as any).user.email || 'test@example.com',
-                phone: '9800000000',
+                name: (req as any).user.name || 'Customer',
+                email: (req as any).user.email || 'customer@example.com',
+                phone: (req as any).user.phone || '9800000000',
             },
         });
 
-        console.log('Khalti response:', {
-            pidx: khaltiResponse.pidx,
-            payment_url: khaltiResponse.payment_url,
-        });
-
-        // Update transaction with pidx
+        // Rest of your code (perfect)
         await Transaction.updateOne(
             { _id: transaction._id },
             { $set: { pidx: khaltiResponse.pidx } }
@@ -65,7 +61,7 @@ export const purchasePlan = async (req: Request, res: Response): Promise<any> =>
             payment_url: khaltiResponse.payment_url,
         });
     } catch (error: any) {
-        console.error('Purchase plan error:', error.message);
+        console.error('Purchase plan error:', error);
         return response(res, 500, 'Payment initiation failed', error.message);
     }
 };
