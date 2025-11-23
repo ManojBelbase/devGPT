@@ -1,14 +1,15 @@
-// src/router/appRoutes.tsx (or wherever your routes file is)
-import ChatBox from "../components/ChatBox";
+// src/router/appRoutes.tsx
+
+import { Navigate } from "react-router-dom";
+import PaymentSuccess from "../pages/credit/PaymentSuccess"; // ← Import here
 import { FronendRoutes } from "../constant/FrontendRoutes";
+import { PublicRoute } from "./PublicRoute";
+import { ProtectedRoute } from "./ProtectedRoute";
 import Layout from "../layout/Layout";
 import CommunityPageIndex from "../pages/community/CommunityPageIndex";
+import ChatBox from "../components/ChatBox";
 import CreditPageIndex from "../pages/credit/CreditPageIndex";
-import PaymentSuccess from "../pages/credit/PaymentSuccess";
 import LoginPageIndex from "../pages/login/LoginPageIndex";
-import { ProtectedRoute } from "./ProtectedRoute";
-import { PublicRoute } from "./PublicRoute";
-import { Navigate } from "react-router-dom"; // ← ADD THIS
 
 export const appRoutes = [
     // Public Routes
@@ -21,31 +22,29 @@ export const appRoutes = [
         ),
     },
 
-    // Protected Layout (Sidebar + Outlet)
+    // ← ADD THIS: Payment success must be PUBLIC (not protected!)
     {
-        path: FronendRoutes.HOME, // this is "/" 
+        path: FronendRoutes.PAYMENT_SUCCESS,
+        element: <PaymentSuccess />, // ← No ProtectedRoute wrapper!
+    },
+
+    // Protected Layout (everything else)
+    {
+        path: FronendRoutes.HOME,
         element: (
             <ProtectedRoute>
                 <Layout />
             </ProtectedRoute>
         ),
         children: [
-            // 1. Redirect "/" → "/chat" automatically
             { index: true, element: <Navigate to={FronendRoutes.CHAT} replace /> },
-
-            // 2. Explicit /chat route
             { path: FronendRoutes.CHAT, element: <ChatBox /> },
-
-            // Other protected pages
             { path: FronendRoutes.COMMUNITY, element: <CommunityPageIndex /> },
             { path: FronendRoutes.CREDITS, element: <CreditPageIndex /> },
-            { path: FronendRoutes.PAYMENT_SUCCESS, element: <PaymentSuccess /> },
-
-            // Optional: Catch-all redirect (if someone types wrong URL under /)
             { path: "*", element: <Navigate to={FronendRoutes.CHAT} replace /> },
         ],
     },
 
-    // Optional: Global fallback (if someone goes to unknown route)
+    // Global fallback
     { path: "*", element: <Navigate to={FronendRoutes.LOGIN} replace /> },
 ];

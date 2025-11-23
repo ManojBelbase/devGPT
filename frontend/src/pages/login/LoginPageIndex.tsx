@@ -6,7 +6,7 @@ import SocialAuthButtons from "./components/SocialAuthButtons";
 import toast from "react-hot-toast";
 import type { AppDispatch } from "../../redux/store";
 
-const LoginPage = () => {
+const LoginPageIndex = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -104,4 +104,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default LoginPageIndex;
