@@ -1,4 +1,3 @@
-// src/pages/PaymentSuccess.tsx
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -7,7 +6,7 @@ import api from "../../api/axiosInstance";
 
 type Status = "loading" | "success" | "failed" | "cancelled";
 
-const PaymentSuccess = () => {
+const VerifyPayment = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [status, setStatus] = useState<Status>("loading");
@@ -118,4 +117,4 @@ const PaymentSuccess = () => {
     );
 };
 
-export default PaymentSuccess;
+export default VerifyPayment;

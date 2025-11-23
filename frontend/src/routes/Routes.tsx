@@ -1,7 +1,6 @@
 // src/router/appRoutes.tsx
 
 import { Navigate } from "react-router-dom";
-import PaymentSuccess from "../pages/credit/PaymentSuccess"; // ← Import here
 import { FronendRoutes } from "../constant/FrontendRoutes";
 import { PublicRoute } from "./PublicRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -10,6 +9,7 @@ import CommunityPageIndex from "../pages/community/CommunityPageIndex";
 import ChatBox from "../components/ChatBox";
 import CreditPageIndex from "../pages/credit/CreditPageIndex";
 import LoginPageIndex from "../pages/login/LoginPageIndex";
+import VerifyPayment from "../pages/credit/VerifyPayment";
 
 export const appRoutes = [
     // Public Routes
@@ -22,13 +22,11 @@ export const appRoutes = [
         ),
     },
 
-    // ← ADD THIS: Payment success must be PUBLIC (not protected!)
     {
-        path: FronendRoutes.PAYMENT_SUCCESS,
-        element: <PaymentSuccess />, // ← No ProtectedRoute wrapper!
+        path: FronendRoutes.VERIFY_PAYMENT,
+        element: <VerifyPayment />,
     },
 
-    // Protected Layout (everything else)
     {
         path: FronendRoutes.HOME,
         element: (
