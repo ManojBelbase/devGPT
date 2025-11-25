@@ -40,7 +40,6 @@ const ChatBox = () => {
         inputRef.current?.focus();
     }, []);
 
-    // Ultimate image URL detector — works with ALL your message formats
     const extractImageUrl = (msg: any): string | null => {
         // Case 1: Direct URL in content (very old format)
         if (typeof msg.content === "string" && msg.content.includes("https://ik.imagekit.io")) {
@@ -53,7 +52,6 @@ const ChatBox = () => {
         // Case 3: .imageUrl field (newer)
         if (msg.imageUrl) return msg.imageUrl;
 
-        // Case 4: content is object with image inside (rare)
         if (msg.content && typeof msg.content === "object") {
             return msg.content.image || msg.content.imageUrl || null;
         }
