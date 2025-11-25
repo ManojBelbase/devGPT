@@ -232,7 +232,7 @@ const ChatBox = () => {
                                     <div className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-linear-to-r from-purple-500 to-blue-500 items-center justify-center shrink-0">
                                         <Icon icon="hugeicons:developer" className="text-white text-xl" />
                                     </div>
-                                    <div className={`rounded-xl px-4 py-4 ${isDark ? "bg-gray-800" : "bg-gray-100"} max-w-[80%]`}>
+                                    <div>
                                         <ChatLoader />
                                     </div>
                                 </div>

@@ -46,16 +46,17 @@ const ChatInput: React.FC<ChatInputProps> = ({
             shadow-2xl z-20 
             mx-auto w-full
         `}>
-            <div className="max-w-4xl mx-auto px-2 sm:px-6 md:px-8 py-3 w-full">
+            <div className="max-w-4xl mx-auto px-2 sm:px-4 py-2 w-full">
                 <div className="relative mx-auto w-full">
                     <form
                         onSubmit={handleSubmit}
                         className={`
-                            flex items-end p-2 
+                            flex items-end 
                             border ${isDark ? "border-gray-700" : "border-gray-300"} 
-                            rounded-2xl shadow-md sm:rounded-3xl sm:shadow-lg
+                            rounded-full shadow-md
                             ${isDark ? "bg-gray-900" : "bg-white"}
                             transition-all
+                           px-2 sm:px-3 py-1.5
                         `}
                     >
                         {/* Attachment/Mode Toggle Button */}
@@ -65,7 +66,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
                             disabled={loading}
                             title={mode === "text" ? "Switch to Image Mode" : "Switch to Text Mode"}
                             className={`
-                                p-1.5 sm:p-2 rounded-xl sm:rounded-full 
+                                p-1.5 rounded-full
                                 transition-colors duration-200 
                                 text-gray-500 dark:text-gray-400
                                 ${!loading ? "hover:bg-gray-100 dark:hover:bg-gray-700" : "cursor-not-allowed"}
@@ -74,8 +75,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
                         >
                             <Icon
                                 icon={mode === "text" ? "material-symbols:attach-file" : "material-symbols:palette-outline"}
-                                fontSize={20}
-                                className="sm:text-2xl"
+                                className="text-lg"
                             />
                         </button>
 
@@ -87,12 +87,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
                             onChange={(e) => setPrompt(e.target.value)}
                             onKeyDown={handleKeyDown}
                             disabled={loading}
-                            minRows={1} // Ensures it looks like a single line when empty
-                            maxRows={6} // Limits vertical growth on mobile
+                            minRows={1}
+                            maxRows={4}
                             className={`
-                                flex-1 w-full max-h-40 resize-none overflow-y-auto 
-                                bg-transparent outline-none p-2
-                                text-sm sm:text-base 
+                                flex-1 w-full max-h-32 resize-none overflow-y-auto 
+                                bg-transparent outline-none px-2 pb-1
+                                text-xs sm:text-sm
                                 ${isDark ? "text-white" : "text-black"}
                                 transition-all
                             `}
@@ -103,23 +103,22 @@ const ChatInput: React.FC<ChatInputProps> = ({
                             type="submit"
                             disabled={!prompt.trim() || loading}
                             className={`
-                                p-2 sm:p-3 rounded-xl sm:rounded-full 
+                                p-1 rounded-full
                                 transition-all duration-200 
                                 ${prompt.trim() && !loading
-                                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                                    ? "bg-purple-500 hover:bg-purple-700 text-white"
                                     : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                                 }
-                                ml-1 sm:ml-2
                                 flex items-center justify-center
                             `}
                         >
-                            <Icon icon="material-symbols:send-rounded" fontSize={20} className="sm:text-2xl" />
+                            <Icon icon="material-symbols:send-rounded" className="text-lg" />
                         </button>
                     </form>
                 </div>
 
                 {/* Footer Text */}
-                <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-1 sm:mt-2 mb-1">
+                <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-1 mb-1">
                     devGPT can make mistakes. Think carefully.
                 </p>
             </div>
