@@ -118,10 +118,10 @@ const ChatBox = () => {
         <div className="flex flex-col h-screen overflow-hidden">
 
             {/* Header (Placeholder for the menu button/title) */}
-            <div className={`border-b ${isDark ? "border-gray-800 bg-gray-950" : "border-gray-200 bg-white"} px-4 py-3 shrink-0 z-20`}>
+            <div className={`border-b ${isDark ? "border-gray-800 bg-gray-950" : "border-gray-200 bg-white"} py-1.5 px-4 sm:py-3 shrink-0 z-20`}>
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
 
-                    <h1 className="text-base w-full sm:text-lg font-medium truncate sm:max-w-[70vw] mx-auto sm:mx-0">
+                    <h1 className="text-sm w-full sm:text-lg font-medium truncate sm:max-w-[70vw] mx-auto sm:mx-0">
                         {selectedChat?.title || "New Chat"}
                     </h1>
                     <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
@@ -170,14 +170,14 @@ const ChatBox = () => {
                                         {/* Message Bubble */}
                                         <div
                                             className={`
-                                                p-2 sm:p-3 rounded-xl ${isUser ? "rounded-br-md" : "rounded-tl-md"}
+                                                p-2 sm:p-3 rounded-xl  ${isUser ? "rounded-br-md" : "rounded-tl-md"}
                                                 ${messageBg} 
                                                 max-w-full sm:max-w-[80%]
                                                 ${isImageMessage ? "p-1 sm:p-2" : "text-sm sm:text-base"} 
                                             `}
                                         >
                                             {isImageMessage ? (
-                                                <div className="flex flex-col space-y-1">
+                                                <div className="grid sm:grid-cols-2 space-y-1">
                                                     {/* Show caption */}
                                                     {msg.content &&
                                                         typeof msg.content === "string" &&
