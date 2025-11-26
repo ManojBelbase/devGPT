@@ -1,4 +1,5 @@
-// controllers/planController.ts
+// src/controllers/planController.ts
+
 import { Request, Response } from 'express';
 import { response } from '../utils/responseHandler';
 import { plans } from '../consts/creditPlans';
@@ -13,56 +14,72 @@ export const getPlans = async (req: Request, res: Response): Promise<any> => {
         return response(res, 500, 'Internal server error', error.message);
     }
 };
+
 export const purchasePlan = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { planId, return_url } = req.body; // ← ADD return_url here
+        const { planId, return_url } = req.body;
         const userId = (req as any).user._id;
 
-        // Validate return_url (security)
-        if (!return_url || !return_url.startsWith('https://devgptai.vercel.app/payment-success')) {
-            return response(res, 400, 'Invalid return URL', null);
+        // ─────── SECURITY: Validate return_url ───────
+        if (!return_url) {
+            return response(res, 400, 'return_url is required', null);
         }
 
-        const plan = plans.find((p) => p._id === planId);
+        // Allow only your domains (add localhost for testing)
+        const allowedOrigins = [
+            'https://devgptai.vercel.app',
+            'http://localhost:3000',        // remove this in production if you want
+        ];
+
+        const isAllowed = allowedOrigins.some(origin => return_url.startsWith(origin));
+        if (!isAllowed) {
+            return response(res, 400, 'Invalid return_url domain', null);
+        }
+        // ─────────────────────────────────────────────
+
+        const plan = plans.find(p => p._id === planId);
         if (!plan) {
-            return response(res, 400, 'Invalid Plan', null);
+            return response(res, 400, 'Invalid plan selected', null);
         }
 
+        // Create pending transaction
         const transaction = await Transaction.create({
             userId,
             planId: plan._id,
-            amount: KhaltiService.formatAmount(plan.price),
+            amount: KhaltiService.formatAmount(plan.price), // in paisa
             credits: plan.credits,
             isPaid: false,
         });
 
-        // Use the dynamic return_url from frontend
+        // ensure we have a string id for purchaseOrderId and updates
+        const transactionId = (transaction as any)._id?.toString?.() ?? String((transaction as any)._id);
+
+        // Initiate payment with Khalti
         const khaltiResponse = await KhaltiService.initiatePayment({
-            returnUrl: return_url, // ← NOW DYNAMIC!
+            returnUrl: return_url,                         // now dynamic & correct
             websiteUrl: 'https://devgptai.vercel.app',
             amount: KhaltiService.formatAmount(plan.price),
-            purchaseOrderId: (transaction as any)._id.toString(),
-            purchaseOrderName: `${plan.name} Plan`,
+            purchaseOrderId: transactionId,
+            purchaseOrderName: `${plan.name} Credit Plan`,
             customerInfo: {
-                name: (req as any).user.name || 'Customer',
-                email: (req as any).user.email || 'customer@example.com',
+                name: (req as any).user.name || 'User',
+                email: (req as any).user.email || 'user@example.com',
                 phone: (req as any).user.phone || '9800000000',
             },
         });
 
-        // Rest of your code (perfect)
-        await Transaction.updateOne(
-            { _id: transaction._id },
-            { $set: { pidx: khaltiResponse.pidx } }
-        );
+        // Save pidx to transaction so we can verify later
+        await Transaction.findByIdAndUpdate(transactionId, {
+            pidx: khaltiResponse.pidx,
+        });
 
-        return response(res, 200, 'Payment initiated successfully', {
+        return response(res, 200, 'Payment initiated', {
             pidx: khaltiResponse.pidx,
             payment_url: khaltiResponse.payment_url,
         });
     } catch (error: any) {
         console.error('Purchase plan error:', error);
-        return response(res, 500, 'Payment initiation failed', error.message);
+        return response(res, 500, 'Failed to initiate payment', error.message || error);
     }
 };
 
@@ -71,62 +88,67 @@ export const verifyPayment = async (req: Request, res: Response): Promise<any> =
         const { pidx } = req.query;
 
         if (!pidx || typeof pidx !== 'string') {
-            return response(res, 400, 'Invalid pidx', null);
+            return response(res, 400, 'Missing or invalid pidx', null);
         }
 
-        console.log('Verifying payment for pidx:', pidx);
+        console.log('Verifying pidx →', pidx);
 
-        // Verify payment with Khalti
-        const khaltiResponse = await KhaltiService.verifyPayment(pidx);
+        // Step 1: Verify with Khalti
+        const khaltiData = await KhaltiService.verifyPayment(pidx);
 
-        console.log('Khalti lookup response:', {
-            status: khaltiResponse.status,
-            amount: khaltiResponse.amount,
-            transaction_id: khaltiResponse.transaction_id,
+        console.log('Khalti verification response:', {
+            status: khaltiData.status,
+            transaction_id: khaltiData.transaction_id,
+            amount: khaltiData.amount,
         });
 
-        // Find transaction in database
+        // Step 2: Find transaction by pidx
         const transaction = await Transaction.findOne({ pidx }).populate('userId');
         if (!transaction) {
-            console.error('Transaction not found for pidx:', pidx);
-            return response(res, 400, 'Transaction not found', null);
+            return response(res, 404, 'Transaction not found', null);
         }
 
-        // Check if payment is completed
-        if (KhaltiService.isPaymentCompleted(khaltiResponse.status)) {
-            // Update transaction
-            await Transaction.updateOne(
-                { _id: transaction._id },
-                {
-                    $set: {
-                        isPaid: true,
-                        transactionId: khaltiResponse.transaction_id,
-                    },
-                }
-            );
-
-            // Add credits to user
-            await User.updateOne(
-                { _id: transaction.userId },
-                { $inc: { credits: transaction.credits } }
-            );
-
-            console.log(`Credits updated for user ${transaction.userId}: +${transaction.credits}`);
-
-            return response(res, 200, 'Payment verified successfully', {
-                transactionId: khaltiResponse.transaction_id,
-                amount: KhaltiService.parseAmount(khaltiResponse.amount),
+        // Prevent double-spending
+        if (transaction.isPaid) {
+            return response(res, 200, 'Payment already processed', {
                 credits: transaction.credits,
             });
+        }
+
+        // Step 3: Check if payment is actually completed
+        if (KhaltiService.isPaymentCompleted(khaltiData.status)) {
+            // Mark as paid
+            await Transaction.findByIdAndUpdate(transaction._id, {
+                isPaid: true,
+                transactionId: khaltiData.transaction_id,
+                status: khaltiData.status,
+                verifiedAt: new Date(),
+            });
+
+            // Add credits to user
+            await User.findByIdAndUpdate(transaction.userId, {
+                $inc: { credits: transaction.credits },
+            });
+
+            console.log(`Credits added: +${transaction.credits} to user ${transaction.userId}`);
+
+            return response(res, 200, 'Payment successful', {
+                credits: transaction.credits,
+                transactionId: khaltiData.transaction_id,
+                amount: KhaltiService.parseAmount(khaltiData.amount),
+            });
         } else {
-            console.log('Payment not completed, status:', khaltiResponse.status);
-            return response(res, 400, `Payment ${khaltiResponse.status.toLowerCase()}`, {
-                status: khaltiResponse.status,
-                transactionId: khaltiResponse.transaction_id || null,
+            // Payment pending / failed / refunded
+            await Transaction.findByIdAndUpdate(transaction._id, {
+                status: khaltiData.status,
+            });
+
+            return response(res, 400, `Payment ${khaltiData.status.toLowerCase()}`, {
+                status: khaltiData.status,
             });
         }
     } catch (error: any) {
-        console.error('Payment verification error:', error.message);
-        return response(res, 500, 'Payment verification failed', error.message);
+        console.error('Verify payment error:', error);
+        return response(res, 500, 'Verification failed', error.message || error);
     }
 };
