@@ -49,13 +49,16 @@ const Sidebar = () => {
 
     // ----------------------------
     // CREATE NEW CHAT
-    // ----------------------------
     const handleNewChat = async () => {
         if (creatingChat || !user) return;
         setCreatingChat(true);
 
         try {
             const newChat = await dispatch(createChatThunk()).unwrap();
+
+            // Refresh chats list in Redux
+            await dispatch(getChatsThunk()).unwrap();
+
             selectChat(newChat);
             toast.success("New chat created!");
             navigate("/chat");
@@ -65,6 +68,7 @@ const Sidebar = () => {
             setCreatingChat(false);
         }
     };
+
 
     // ----------------------------
     // DELETE CHAT
@@ -141,8 +145,8 @@ const Sidebar = () => {
     return (
         <div
             className={`h-screen flex flex-col px-3 py-5 border-r overflow-hidden transition-all ${theme === "dark"
-                    ? "border-white/10 bg-[#0f0f0f]"
-                    : "border-gray-200 bg-white"
+                ? "border-white/10 bg-[#0f0f0f]"
+                : "border-gray-200 bg-white"
                 }`}
         >
             {/* Logo */}
@@ -155,8 +159,8 @@ const Sidebar = () => {
                 onClick={handleNewChat}
                 disabled={creatingChat}
                 className={`flex items-center justify-center w-full py-3 mb-4 rounded-sm font-semibold text-sm transition-colors ${creatingChat
-                        ? "bg-gray-500 cursor-not-allowed text-white/70"
-                        : "bg-purple-600 hover:bg-purple-700 text-white"
+                    ? "bg-gray-500 cursor-not-allowed text-white/70"
+                    : "bg-purple-600 hover:bg-purple-700 text-white"
                     }`}
             >
                 {creatingChat ? (
@@ -175,8 +179,8 @@ const Sidebar = () => {
             {/* Search Input */}
             <div
                 className={`flex items-center gap-3 px-3 py-2 mb-4 rounded-sm transition-colors ${theme === "dark"
-                        ? "bg-white/5 hover:bg-white/10"
-                        : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-white/5 hover:bg-white/10"
+                    : "bg-gray-100 hover:bg-gray-200"
                     }`}
             >
                 <Icon
@@ -191,8 +195,8 @@ const Sidebar = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`flex-1 bg-transparent outline-none text-sm ${theme === "dark"
-                            ? "text-white placeholder-white/50"
-                            : "text-gray-800 placeholder-gray-500"
+                        ? "text-white placeholder-white/50"
+                        : "text-gray-800 placeholder-gray-500"
                         }`}
                 />
 
@@ -222,22 +226,22 @@ const Sidebar = () => {
                                 navigate("/chat");
                             }}
                             className={`group relative px-2 py-2 cursor-pointer transition-all border rounded-sm ${selectedChat?._id === chat._id
-                                    ? theme === "dark"
-                                        ? "bg-white/10 border-purple-500"
-                                        : "bg-gray-100 border-purple-500"
-                                    : theme === "dark"
-                                        ? "border-white/10 hover:bg-white/5"
-                                        : "border-gray-200 hover:bg-gray-50"
+                                ? theme === "dark"
+                                    ? "bg-white/10 border-purple-500"
+                                    : "bg-gray-100 border-purple-500"
+                                : theme === "dark"
+                                    ? "border-white/10 hover:bg-white/5"
+                                    : "border-gray-200 hover:bg-gray-50"
                                 }`}
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex-1 min-w-0 pr-8">
                                     <p
                                         className={`text-sm font-medium truncate ${selectedChat?._id === chat._id
-                                                ? "text-purple-400"
-                                                : theme === "dark"
-                                                    ? "text-white"
-                                                    : "text-gray-800"
+                                            ? "text-purple-400"
+                                            : theme === "dark"
+                                                ? "text-white"
+                                                : "text-gray-800"
                                             }`}
                                     >
                                         {getPreview(chat)}
@@ -254,8 +258,8 @@ const Sidebar = () => {
                                     fontSize={19}
                                     onClick={(e) => handleDelete(e, chat._id)}
                                     className={`absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all cursor-pointer ${theme === "dark"
-                                            ? "text-white/60 hover:text-red-400"
-                                            : "text-gray-500 hover:text-red-600"
+                                        ? "text-white/60 hover:text-red-400"
+                                        : "text-gray-500 hover:text-red-600"
                                         }`}
                                 />
                             </div>
@@ -274,8 +278,8 @@ const Sidebar = () => {
             <div
                 onClick={() => navigate(FronendRoutes.CREDITS)}
                 className={`flex items-center gap-3 p-2 rounded-sm cursor-pointer transition-colors border ${theme === "dark"
-                        ? "hover:bg-white/5 border-white/10"
-                        : "hover:bg-gray-100 border-gray-200"
+                    ? "hover:bg-white/5 border-white/10"
+                    : "hover:bg-gray-100 border-gray-200"
                     }`}
             >
                 <Icon
@@ -303,8 +307,8 @@ const Sidebar = () => {
             {/* Theme Toggle */}
             <div
                 className={`flex items-center justify-between p-3 mt-1 rounded-sm cursor-pointer transition-colors border ${theme === "dark"
-                        ? "hover:bg-white/5 border-white/10"
-                        : "hover:bg-gray-100 border-gray-200"
+                    ? "hover:bg-white/5 border-white/10"
+                    : "hover:bg-gray-100 border-gray-200"
                     }`}
             >
                 <div className="flex items-center gap-3 text-sm">
@@ -339,8 +343,8 @@ const Sidebar = () => {
             {/* Profile + Logout */}
             <div
                 className={`flex items-center justify-between p-3 mt-1 rounded-sm transition-colors border ${theme === "dark"
-                        ? "hover:bg-white/5 border-white/10"
-                        : "hover:bg-gray-100 border-gray-200"
+                    ? "hover:bg-white/5 border-white/10"
+                    : "hover:bg-gray-100 border-gray-200"
                     }`}
             >
                 <div className="flex items-center gap-3 flex-1 min-w-0">

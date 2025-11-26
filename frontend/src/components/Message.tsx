@@ -1,15 +1,10 @@
 import { Icon } from "@iconify/react"
-import { useEffect } from "react"
-import Markdown from "react-markdown"
-import Prism from "prismjs"
+import { AIResponseParser } from "ai-response-parser"
 import { fromNow } from "miti-pariwartan"
 
 const Message = ({ message }: any) => {
 
-    useEffect(() => {
-        Prism.highlightAll()
 
-    }, [message?.content])
     return (
         <div>
             {message?.role === "user" ? (
@@ -40,7 +35,7 @@ const Message = ({ message }: any) => {
                                 className="max-w-md rounded-md shadow-sm"
                             />
                         ) : <div className="text-sm leading-relaxed reset-tw">
-                            <Markdown>{message?.content}</Markdown>
+                            <AIResponseParser content={message?.content} />
                         </div>}
 
                         <span className="text-xs text-gray-500 dark:text-gray-400">{fromNow(message?.timestamp)}</span>
