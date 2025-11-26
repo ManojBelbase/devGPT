@@ -117,7 +117,7 @@ const ChatBox = () => {
 
             {/* Header (Placeholder for the menu button/title) */}
             <div className={`border-b ${isDark ? "border-gray-800 bg-gray-950" : "border-gray-200 bg-white"} py-1.5 px-4 sm:py-3 shrink-0 z-20`}>
-                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                <div className="max-w-5xl mx-auto flex items-center justify-between">
 
                     <h1 className="text-sm w-full sm:text-lg font-medium truncate sm:max-w-[70vw] mx-auto sm:mx-0">
                         {selectedChat?.title || "New Chat"}
@@ -168,7 +168,7 @@ const ChatBox = () => {
                                         {/* Message Bubble */}
                                         <div
                                             className={`
-                                                p-2 sm:p-3 rounded-xl  ${isUser ? "rounded-br-md" : "rounded-tl-md"}
+                                                p-2 sm:p-3 rounded-xl h-fit   ${isUser ? "rounded-br-md" : "rounded-tl-md"}
                                                 ${messageBg} 
                                                 max-w-full sm:max-w-[80%]
                                                 ${isImageMessage ? "p-1 sm:p-2" : "text-sm sm:text-base"} 
@@ -218,7 +218,7 @@ const ChatBox = () => {
 
                                         {/* User Avatar - Hidden on small screens for cleaner look */}
                                         {isUser && (
-                                            <div className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-600 items-center justify-center text-white font-bold text-sm shrink-0">
+                                            <div className="hidden sm:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-600 uppercase items-center justify-center text-white font-semibold text-sm shrink-0">
                                                 {user?.name?.[0] || "U"}
                                             </div>
                                         )}

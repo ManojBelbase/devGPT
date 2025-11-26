@@ -1,5 +1,5 @@
 // src/components/Sidebar.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import { fromNow } from "miti-pariwartan";
@@ -29,6 +29,7 @@ const Sidebar = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [creatingChat, setCreatingChat] = useState(false);
+    const isInitializing = useRef(false); // Prevent double creation
 
     // ----------------------------
     // FILTER CHATS
@@ -82,12 +83,14 @@ const Sidebar = () => {
 
             const refreshed = await dispatch(getChatsThunk()).unwrap();
             const updatedChats = refreshed?.chats || refreshed || [];
-            if (updatedChats.length > 0) {
+
+            // After deleting, check if no chats remain
+            if (updatedChats.length === 0) {
+                selectChat(null);
+                // The useEffect will handle creating a new chat automatically
+            } else {
                 selectChat(updatedChats[0]);
                 navigate("/chat");
-            } else {
-                selectChat(null);
-                navigate("/");
             }
         } catch {
             toast.error("Failed to delete chat");
@@ -118,26 +121,66 @@ const Sidebar = () => {
         return text.length > 60 ? text.slice(0, 60) + "..." : text;
     };
 
-    // ----------------------------
     // AUTO CREATE CHAT IF EMPTY
-    // ----------------------------
     useEffect(() => {
-        if (!user) return;
+        if (!user || isInitializing.current) return;
 
-        const loadChats = async () => {
-            const res = await dispatch(getChatsThunk()).unwrap();
-            const list = res?.chats || res || [];
+        const loadAndEnsureChat = async () => {
+            isInitializing.current = true; // Prevent re-entry
 
-            if (list.length === 0) {
-                const newChat = await dispatch(createChatThunk()).unwrap();
-                selectChat(newChat);
-                navigate("/chat");
-                toast.success("New chat created automatically!");
+            try {
+                // Always fetch fresh chats first
+                const res = await dispatch(getChatsThunk()).unwrap();
+                const list = res?.chats || res || [];
+
+                // If no chats exist → create one immediately
+                if (list.length === 0) {
+                    const newChat = await dispatch(createChatThunk()).unwrap();
+                    await dispatch(getChatsThunk()).unwrap(); // Refresh list
+                    selectChat(newChat);
+                    navigate("/chat");
+                    toast.success("New chat created!");
+                } else if (!selectedChat || !list.find((c: any) => c._id === selectedChat._id)) {
+                    // If current selected chat was deleted externally
+                    selectChat(list[0]);
+                    navigate("/chat");
+                }
+            } catch (err) {
+                console.error("Failed to load or create chat:", err);
+            } finally {
+                isInitializing.current = false;
             }
         };
 
-        loadChats();
-    }, [user]);
+        loadAndEnsureChat();
+    }, [user, dispatch, selectChat, navigate]); // Removed chats?.length dependency
+
+    // Separate effect to handle when chats become empty
+    useEffect(() => {
+        if (!user || !chats || isInitializing.current || creatingChat) return;
+
+        // Only trigger if chats array exists but is empty
+        if (chats.length === 0) {
+            const createEmptyChat = async () => {
+                if (isInitializing.current) return;
+                isInitializing.current = true;
+
+                try {
+                    const newChat = await dispatch(createChatThunk()).unwrap();
+                    await dispatch(getChatsThunk()).unwrap();
+                    selectChat(newChat);
+                    navigate("/chat");
+                    toast.success("New chat created!");
+                } catch (err) {
+                    console.error("Failed to create chat:", err);
+                } finally {
+                    isInitializing.current = false;
+                }
+            };
+
+            createEmptyChat();
+        }
+    }, [chats?.length]); // Only watch length changes
 
     // ----------------------------
     // RENDER

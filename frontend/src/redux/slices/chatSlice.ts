@@ -33,7 +33,6 @@ const chatSlice = createSlice({
             state.chats = [];
             state.selectedChat = null;
         },
-        // Optional: optimistic add new chat
         addChatLocally: (state, action: PayloadAction<Chat>) => {
             state.chats.unshift(action.payload);
             state.selectedChat = action.payload;
