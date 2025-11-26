@@ -117,7 +117,7 @@ const ChatBox = () => {
 
             {/* Header (Placeholder for the menu button/title) */}
             <div className={`border-b ${isDark ? "border-gray-800 bg-gray-950" : "border-gray-200 bg-white"} py-1.5 px-4 sm:py-3 shrink-0 z-20`}>
-                <div className="max-w-4xl mx-auto flex items-center justify-between">
+                <div className="max-w-6xl mx-auto flex items-center justify-between">
 
                     <h1 className="text-sm w-full sm:text-lg font-medium truncate sm:max-w-[70vw] mx-auto sm:mx-0">
                         {selectedChat?.title || "New Chat"}

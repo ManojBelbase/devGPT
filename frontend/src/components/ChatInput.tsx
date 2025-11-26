@@ -1,10 +1,8 @@
-// src/components/ChatInput.tsx
 import React from "react";
 import { Icon } from "@iconify/react";
 import { useAppContext } from "../context/AppContext";
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize from "react-textarea-autosize";
 
-// Define the props for the ChatInput component
 interface ChatInputProps {
     prompt: string;
     setPrompt: (prompt: string) => void;
@@ -27,7 +25,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
     const { theme } = useAppContext();
     const isDark = theme === "dark";
 
-    // Function to handle keydown events: Enter sends, Shift + Enter creates a new line
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -35,92 +32,85 @@ const ChatInput: React.FC<ChatInputProps> = ({
         }
     };
 
-    const toggleMode = () => {
-        setMode(mode === "text" ? "image" : "text");
-    };
-
     return (
-        // Make the container fixed at the bottom for mobile experience
-        <div className={`
-            fixed sm:relative bottom-0 left-0 right-0 
-            shadow-2xl z-20 
-            mx-auto w-full
-        `}>
-            <div className="max-w-4xl mx-auto px-2 sm:px-4 py-2 w-full">
-                <div className="relative mx-auto w-full">
-                    <form
-                        onSubmit={handleSubmit}
+        <div className="fixed sm:relative bottom-0 left-0 right-0 z-20 w-full px-2 py-2">
+            <div className="max-w-4xl mx-auto">
+
+                <form
+                    onSubmit={handleSubmit}
+                    className={`
+                        flex items-end gap-3
+                        rounded-2xl w-full
+                        sm:px-4 px-2 py-2 sm:py-3
+                        border
+                        ${isDark
+                            ? "bg-[#0f0f0f] border-[#2A2A2A]"
+                            : "bg-white border-gray-300"
+                        }
+                        shadow-[0_0_15px_rgba(0,0,0,0.2)]
+                        transition-all duration-200
+                    `}
+                >
+                    {/* Left Action Button */}
+                    <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => setMode(mode === "text" ? "image" : "text")}
                         className={`
-                            flex items-end 
-                            border ${isDark ? "border-gray-700" : "border-gray-300"} 
-                            rounded-full shadow-md
-                            ${isDark ? "bg-gray-900" : "bg-white"}
-                            transition-all
-                           px-2 sm:px-3 py-1.5
+                            p-2 rounded-xl
+                            text-gray-400 
+                            ${!loading ? "hover:bg-gray-800" : "opacity-40 cursor-not-allowed"}
+                            transition
                         `}
                     >
-                        {/* Attachment/Mode Toggle Button */}
-                        <button
-                            type="button"
-                            onClick={toggleMode}
-                            disabled={loading}
-                            title={mode === "text" ? "Switch to Image Mode" : "Switch to Text Mode"}
-                            className={`
-                                p-1.5 rounded-full
-                                transition-colors duration-200 
-                                text-gray-500 dark:text-gray-400
-                                ${!loading ? "hover:bg-gray-100 dark:hover:bg-gray-700" : "cursor-not-allowed"}
-                                flex items-center justify-center
-                            `}
-                        >
-                            <Icon
-                                icon={mode === "text" ? "material-symbols:attach-file" : "material-symbols:palette-outline"}
-                                className="text-lg"
-                            />
-                        </button>
-
-                        {/* Multi-line Textarea */}
-                        <TextareaAutosize
-                            ref={inputRef as React.RefObject<HTMLTextAreaElement>}
-                            placeholder={mode === "image" ? "Describe the image to generate..." : "Send a message..."}
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            disabled={loading}
-                            minRows={1}
-                            maxRows={4}
-                            className={`
-                                flex-1 w-full max-h-32 resize-none overflow-y-auto 
-                                bg-transparent outline-none px-2 pb-1
-                                text-xs sm:text-sm
-                                ${isDark ? "text-white" : "text-black"}
-                                transition-all
-                            `}
+                        <Icon
+                            icon={
+                                mode === "text"
+                                    ? "solar:paperclip-linear"
+                                    : "solar:palette-linear"
+                            }
+                            className="text-xl"
                         />
+                    </button>
 
-                        {/* Send Button */}
-                        <button
-                            type="submit"
-                            disabled={!prompt.trim() || loading}
-                            className={`
-                                p-1 rounded-full
-                                transition-all duration-200 
-                                ${prompt.trim() && !loading
-                                    ? "bg-purple-500 hover:bg-purple-700 text-white"
-                                    : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                                }
-                                flex items-center justify-center
-                            `}
-                        >
-                            <Icon icon="material-symbols:send-rounded" className="text-lg" />
-                        </button>
-                    </form>
-                </div>
+                    {/* Textarea */}
+                    <TextareaAutosize
+                        ref={inputRef}
+                        minRows={1}
+                        maxRows={8}
+                        placeholder={mode === "text" ? "Type your message..." : "Describe the image you want..."}
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        disabled={loading}
+                        className={`
+                            flex-1 resize-none outline-none text-sm -pt-4  pb-1
+                            sm:text-[15px] leading-relaxed
+                            ${isDark ? "text-gray-200 placeholder-gray-500" : "text-black"
+                            }
+                        `}
+                    />
 
-                {/* Footer Text */}
-                <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-1 mb-1">
+                    {/* Send Button */}
+                    <button
+                        type="submit"
+                        disabled={!prompt.trim() || loading}
+                        className={`
+                            p-2 rounded-xl transition-all
+                            ${prompt.trim()
+                                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                                : "bg-gray-700 text-gray-400 cursor-not-allowed"
+                            }
+                        `}
+                    >
+                        <Icon icon="carbon:send-alt" className="text-xl" />
+                    </button>
+                </form>
+
+                <p className="text-center text-xs text-gray-500 mt-2">
                     devGPT can make mistakes. Think carefully.
                 </p>
+
             </div>
         </div>
     );

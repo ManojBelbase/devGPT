@@ -7,7 +7,6 @@ const ultraShort = [
     "One sec",
     "Hold tight",
     "Typing fast",
-    "Code incoming",
     "Magic happening",
     "Final touches",
     "Just a moment",
