@@ -10,7 +10,7 @@ export const useKhalti = () => {
         try {
             const res = await api.post("/payment/purchase-plan", {
                 planId,
-                return_url: "https://devgptai.vercel.app/payment-success",
+                return_url: "https://devgptai.vercel.app/verify-payment",
             });
 
             if (res.data.status === "success") {
