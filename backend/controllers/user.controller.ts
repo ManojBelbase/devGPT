@@ -4,6 +4,12 @@ import { User } from "../models/user.model";
 import { Chat } from "../models/chat.model";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../services/token.service";
 import { sendAuthCookies } from "../utils/sendCookies";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET
+);
 
 export const registerUser = async (req: Request, res: Response) => {
     try {
@@ -25,6 +31,7 @@ export const registerUser = async (req: Request, res: Response) => {
             name: user.name,
             email: user.email,
             credits: user.credits,
+            accessToken
         })
     } catch (err) {
         return response(res, 500, "Internal server error");
@@ -54,6 +61,7 @@ export const loginUser = async (req: Request, res: Response) => {
             name: user.name,
             email: user.email,
             credits: user.credits,
+            accessToken,
         }
         )
 
@@ -62,6 +70,64 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 };
 
+
+// google login 
+export const googleAuth = async (req: Request, res: Response) => {
+    try {
+        const { token } = req.body; // ID token from frontend
+
+        // Verify the Google token
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        if (!payload) {
+            return response(res, 401, "Invalid Google token");
+        }
+
+        const { email, name, picture, sub: googleId } = payload;
+
+        if (!email) {
+            return response(res, 400, "No email provided by Google");
+        }
+
+        // Find or create user
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Create new user (no password for social login)
+            user = await User.create({
+                name: name || email.split("@")[0],
+                email,
+                password: "GOOGLE_OAUTH_" + googleId, // dummy password
+                // You can add a field like `googleId` or `authProvider` if you want
+            });
+        }
+
+        // Generate tokens (same as normal login)
+        const accessToken = generateAccessToken((user._id as any).toString());
+        const refreshToken = generateRefreshToken((user._id as any).toString());
+
+        const isLocalhost = req.headers.origin?.includes("localhost") ?? false;
+        sendAuthCookies(res, accessToken, refreshToken, isLocalhost);
+
+        return response(res, 200, "Google login successful", {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            credits: user.credits,
+            accessToken,
+        });
+    } catch (err: any) {
+        console.error("Google auth error:", err);
+        return response(res, 500, "Google authentication failed");
+    }
+};
+
+
+// Refresh
 export const refreshTokenController = async (req: Request, res: Response) => {
     try {
         const oldRefreshToken = req.cookies.refreshToken;
@@ -107,7 +173,7 @@ export const getUser = async (req: Request, res: Response): Promise<any> => {
 
 // API to logout
 export const logoutUser = (req: Request, res: Response) => {
-    const isLocalhost = req.headers.origin?.includes("localhost");
+    const isLocalhost = req.headers.origin?.includes("localhost") ?? false;
 
     res.clearCookie("accessToken", {
         httpOnly: true,
@@ -122,7 +188,9 @@ export const logoutUser = (req: Request, res: Response) => {
         sameSite: isLocalhost ? "lax" : "none",
         path: "/",
     });
-    response(res, 200, "Logged out successfully")
+
+    // Also clear from localStorage via frontend response
+    res.json({ message: "Logged out", clearLocalStorage: true });
 };
 
 

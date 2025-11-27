@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
     getCurrentUser,
+    googleLogin,
     loginUser,
     logoutUser,
     registerUser
@@ -64,6 +65,21 @@ const authSlice = createSlice({
                 state.loading = false;
             })
             .addCase(getCurrentUser.rejected, (state) => {
+                state.user = null;
+                state.loading = false;
+            })
+
+            // Inside extraReducers builder, add this block (anywhere with the others):
+
+            // ---------------- GOOGLE LOGIN ----------------
+            .addCase(googleLogin.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(googleLogin.fulfilled, (state, action) => {
+                state.user = action.payload.data ?? null;
+                state.loading = false;
+            })
+            .addCase(googleLogin.rejected, (state) => {
                 state.user = null;
                 state.loading = false;
             })
