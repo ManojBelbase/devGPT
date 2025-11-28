@@ -1,4 +1,4 @@
-# DEvGPT AI – AI Chatbot for Developers
+# devGPT AI – AI Chatbot for Developers
 
 Your personal AI coding assistant that helps to debug, writes code, explains concepts — instantly!
 
