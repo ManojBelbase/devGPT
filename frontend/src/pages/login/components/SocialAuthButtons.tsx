@@ -1,4 +1,3 @@
-// components
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
@@ -32,7 +31,6 @@ export default function SocialAuthButtons() {
         document.body.appendChild(script);
 
         script.onload = () => {
-            // Initialize Google button after script loads
             window.google.accounts.id.initialize({
                 client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
                 callback: handleCredentialResponse,
@@ -40,7 +38,6 @@ export default function SocialAuthButtons() {
                 cancel_on_tap_outside: true,
             });
 
-            // Render the beautiful official Google button
             window.google.accounts.id.renderButton(
                 document.getElementById("google-signin-button")!,
                 {

@@ -1,4 +1,3 @@
-// src/components/Sidebar.tsx
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
@@ -29,11 +28,9 @@ const Sidebar = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [creatingChat, setCreatingChat] = useState(false);
-    const isInitializing = useRef(false); // Prevent double creation
+    const isInitializing = useRef(false);
 
-    // ----------------------------
     // FILTER CHATS
-    // ----------------------------
     const filteredChats = (chats || []).filter((chat: any) => {
         if (!chat) return false;
         const s = searchTerm.toLowerCase();
@@ -48,7 +45,6 @@ const Sidebar = () => {
         return matchTitle || matchMsg;
     });
 
-    // ----------------------------
     // CREATE NEW CHAT
     const handleNewChat = async () => {
         if (creatingChat || !user) return;
@@ -71,9 +67,7 @@ const Sidebar = () => {
     };
 
 
-    // ----------------------------
     // DELETE CHAT
-    // ----------------------------
     const handleDelete = async (e: any, chatId: string) => {
         e.stopPropagation();
 
@@ -97,9 +91,7 @@ const Sidebar = () => {
         }
     };
 
-    // ----------------------------
     // LAST MESSAGE PREVIEW
-    // ----------------------------
     const getPreview = (chat: any) => {
         const lastUserMsg = [...(chat?.messages || [])]
             .reverse()
@@ -126,7 +118,7 @@ const Sidebar = () => {
         if (!user || isInitializing.current) return;
 
         const loadAndEnsureChat = async () => {
-            isInitializing.current = true; // Prevent re-entry
+            isInitializing.current = true;
 
             try {
                 // Always fetch fresh chats first
@@ -136,7 +128,7 @@ const Sidebar = () => {
                 // If no chats exist → create one immediately
                 if (list.length === 0) {
                     const newChat = await dispatch(createChatThunk()).unwrap();
-                    await dispatch(getChatsThunk()).unwrap(); // Refresh list
+                    await dispatch(getChatsThunk()).unwrap();
                     selectChat(newChat);
                     navigate("/chat");
                     toast.success("New chat created!");
@@ -153,7 +145,7 @@ const Sidebar = () => {
         };
 
         loadAndEnsureChat();
-    }, [user, dispatch, selectChat, navigate]); // Removed chats?.length dependency
+    }, [user, dispatch, selectChat, navigate]);
 
     // Separate effect to handle when chats become empty
     useEffect(() => {
@@ -180,11 +172,9 @@ const Sidebar = () => {
 
             createEmptyChat();
         }
-    }, [chats?.length]); // Only watch length changes
+    }, [chats?.length]);
 
-    // ----------------------------
     // RENDER
-    // ----------------------------
     return (
         <div
             className={`h-screen flex flex-col px-3 py-5 border-r overflow-hidden transition-all ${theme === "dark"
