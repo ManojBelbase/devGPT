@@ -58,8 +58,8 @@ export default function SocialAuthButtons() {
     }, [dispatch]);
 
     return (
-        <div style={{ marginTop: "20px" }}>
-            <div id="google-signin-button" style={{ width: "100%" }}></div>
+        <div style={{ marginTop: "20px" }} className="w-full flex justify-between items-center">
+            <div id="google-signin-button" className="w-full"></div>
         </div>
     );
 }
