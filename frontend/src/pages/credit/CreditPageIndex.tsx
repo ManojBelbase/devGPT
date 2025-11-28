@@ -112,25 +112,32 @@ const CreditPageIndex = () => {
                                 <button
                                     disabled={isLoading}
                                     onClick={() => handleBuy(plan._id)}
-                                    className={`w-full py-3 rounded-xl font-semibold cursor-pointer text-white transition-transform transform hover:-translate-y-0.5 flex items-center justify-center gap-2 ${isLoading
-                                        ? "opacity-70 cursor-not-allowed"
-                                        : theme === "dark"
-                                            ? "bg-purple-600 hover:bg-purple-500"
-                                            : "bg-purple-500 hover:bg-purple-600"
-                                        }`}
+                                    className={`
+        w-full py-3 rounded-sm font-semibold cursor-pointer 
+        flex items-center justify-center gap-2
+        text-white transition-all duration-200 
+        ${isLoading ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02] active:scale-[0.98]"}
+        bg-linear-to-r from-[#5A2C91] to-[#7D3BB4]
+        shadow-sm shadow-purple-500/20
+    `}
                                 >
                                     {isLoading ? (
                                         <>
-                                            <Icon
-                                                icon="svg-spinners:180-ring"
-                                                className="text-xl"
-                                            />
+                                            <Icon icon="svg-spinners:180-ring" className="text-xl" />
                                             Processing…
                                         </>
                                     ) : (
-                                        "Buy Now"
+                                        <>
+                                            <img
+                                                src="https://play-lh.googleusercontent.com/Xh_OlrdkF1UnGCnMN__4z-yXffBAEl0eUDeVDPr4UthOERV4Fll9S-TozSfnlXDFzw"
+                                                className="w-6 h-6 object-contain rounded-sm"
+                                                alt="Khalti"
+                                            />
+                                            Pay With Khalti
+                                        </>
                                     )}
                                 </button>
+
                             </div>
                         </div>
                     ))}
