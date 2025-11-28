@@ -33,8 +33,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
     };
 
     return (
-        <div className="fixed sm:relative bottom-0 left-0 right-0 z-20 w-full px-2 py-2">
-            <div className="max-w-4xl mx-auto">
+        <div className={`fixed sm:relative bottom-0 left-0 right-0 z-20 w-full px-2 py-2  ${isDark
+            ? "bg-[#0f0f0f] sm:bg-transparent border-[#2A2A2A]"
+            : "bg-white border-gray-300"
+            }`}>
+            <div className={`max-w-4xl mx-auto  `}>
 
                 <form
                     onSubmit={handleSubmit}
