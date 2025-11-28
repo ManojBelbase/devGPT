@@ -115,7 +115,7 @@ const LoginPageIndex = () => {
                     </div>
 
                     {/* Desktop Header */}
-                    <div className="hidden lg:block mb-8">
+                    <div className="hidden lg:block mb-4">
                         <h2 className="text-3xl font-bold text-gray-900 mb-2">
                             {isRegister ? "Create Account" : "Welcome Back"}
                         </h2>
@@ -125,7 +125,7 @@ const LoginPageIndex = () => {
                     </div>
 
                     {/* Form Card */}
-                    <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                    <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 w-full">
                         <div className="space-y-5">
                             {isRegister && (
                                 <div>
