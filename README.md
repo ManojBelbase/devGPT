@@ -12,6 +12,8 @@ Live Demo: https://devgptai.vercel.app
 - Free 20 Credits + **Khalti Payment** to buy more credits
 - Khalti Test Mode included (no real money needed during dev)
 - Responsive design – works on mobile & desktop
+- Text message requires 1 credit
+- Image generation requires 2 credits
 
 ### Tech Stack
 
